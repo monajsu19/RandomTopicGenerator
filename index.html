@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impromptu - Random Topic Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #F9F5EB;
+            color: #1A3C34;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            color: #1A3C34;
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: #1A3C34;
+            opacity: 0.55;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            letter-spacing: 0.01em;
+        }
+
+        .topic-window {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .topic-display {
+            font-family: 'DM Serif Display', serif;
+            font-size: 3.5rem;
+            line-height: 1.15;
+            color: #1A3C34;
+            padding: 0 1rem;
+            transition: none;
+            user-select: none;
+        }
+
+        .topic-display.settled {
+            animation: settleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .topic-display.spinning {
+            animation: slotTick 0.06s ease-in-out;
+        }
+
+        @keyframes settleIn {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0.5;
+            }
+            60% {
+                transform: translateY(4px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slotTick {
+            0% {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .prompt-hint {
+            font-size: 0.8rem;
+            color: #1A3C34;
+            opacity: 0;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            margin-top: 0.5rem;
+            transition: opacity 0.5s ease;
+            height: 1.2rem;
+        }
+
+        .prompt-hint.visible {
+            opacity: 0.45;
+        }
+
+        .generate-btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.9rem 2.5rem;
+            border: 2px solid #1A3C34;
+            border-radius: 50px;
+            background-color: #D4C0F9;
+            color: #1A3C34;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.01em;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn:hover {
+            background-color: #C5ADF0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(26, 60, 52, 0.1);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .generate-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .generate-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+            background-color: #D4C0F9;
+        }
+
+        .decorative-line {
+            width: 60px;
+            height: 3px;
+            background-color: #D4C0F9;
+            border-radius: 2px;
+            margin-top: 3rem;
+        }
+
+        /* Fade-in on load */
+        .container {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .topic-display {
+                font-size: 2.2rem;
+            }
+
+            .topic-window {
+                height: 160px;
+            }
+
+            .title {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topic-display {
+                font-size: 1.7rem;
+            }
+
+            .topic-window {
+                height: 140px;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            .generate-btn {
+                padding: 0.8rem 2rem;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Impromptu</h1>
+        <p class="subtitle">One minute. One topic. Speak.</p>
+
+        <div class="topic-window">
+            <div class="topic-display" id="topicDisplay">Ready when you are.</div>
+        </div>
+
+        <p class="prompt-hint" id="promptHint">Speak for 60 seconds on this topic.</p>
+
+        <button class="generate-btn" id="generateBtn" onclick="generateTopic()">Generate Topic</button>
+
+        <div class="decorative-line"></div>
+    </div>
+
+    <script>
+        // --- Web Audio API Sound Engine ---
+        let audioCtx = null;
+
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTick(progress) {
+            // progress: 0 (start) to 1 (end) — pitch drops and softens as it slows
+            ensureAudioContext();
+            const now = audioCtx.currentTime;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            // Higher pitch at start, lower as it decelerates
+            const freq = 1800 - progress * 900;
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.6, now + 0.04);
+
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(2500, now);
+            filter.Q.setValueAtTime(2, now);
+
+            // Quick click envelope
+            const volume = 0.08 + (1 - progress) * 0.06;
+            gain.gain.setValueAtTime(volume, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.06);
+        }
+
+        function playLand() {
+            ensureAudioContext();
+            const now = audioCtx.currentTime;
+
+            // --- Chime 1: bright primary tone ---
+            const osc1 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(880, now);
+            gain1.gain.setValueAtTime(0.15, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc1.connect(gain1);
+            gain1.connect(audioCtx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.65);
+
+            // --- Chime 2: harmonic fifth ---
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(1320, now + 0.06);
+            gain2.gain.setValueAtTime(0, now);
+            gain2.gain.linearRampToValueAtTime(0.1, now + 0.06);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.start(now);
+            osc2.stop(now + 0.55);
+
+            // --- Chime 3: upper octave shimmer ---
+            const osc3 = audioCtx.createOscillator();
+            const gain3 = audioCtx.createGain();
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(1760, now + 0.1);
+            gain3.gain.setValueAtTime(0, now);
+            gain3.gain.linearRampToValueAtTime(0.06, now + 0.1);
+            gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+            osc3.connect(gain3);
+            gain3.connect(audioCtx.destination);
+            osc3.start(now);
+            osc3.stop(now + 0.5);
+        }
+
+        const topics = [
+            "The fear of being average",
+            "Coffee shops at 7 a.m.",
+            "The word \u201Clater\u201D",
+            "Old passwords",
+            "Being the youngest in the room",
+            "Being the oldest in the room",
+            "Voice memos",
+            "Cracked phone screens",
+            "Apologizing too much",
+            "The last 5% of effort",
+            "Group chats",
+            "Moving furniture",
+            "Starting over",
+            "Small talk",
+            "Confidence vs arrogance",
+            "Running in the rain",
+            "Being misunderstood",
+            "Public transportation",
+            "Waiting for test results",
+            "Burnout",
+            "Overthinking",
+            "The first day at a new job",
+            "Handshakes",
+            "Cancel culture",
+            "Nostalgia",
+            "Parallel parking",
+            "Silence after an argument",
+            "Ambition",
+            "Envy",
+            "The feeling before a presentation",
+            "Being ghosted",
+            "Winning an argument",
+            "Losing gracefully",
+            "Risk",
+            "Regret",
+            "Boredom",
+            "Libraries",
+            "Snowstorms",
+            "Electric scooters",
+            "Long-distance friendships",
+            "Eye contact",
+            "The word \u201Cshould\u201D",
+            "Deadlines",
+            "Failure",
+            "Procrastination",
+            "Compliments",
+            "Being underestimated",
+            "Being overestimated",
+            "Authority",
+            "Rejection",
+            "Quiet people",
+            "Loud people",
+            "The last slice of pizza",
+            "Perfectionism",
+            "Escaping corporate life",
+            "Existential dread",
+            "Mentorship",
+            "Competition",
+            "Discipline",
+            "Motivation",
+            "Consistency",
+            "Independence",
+            "Freedom",
+            "The first paycheck",
+            "Quitting",
+            "Staying",
+            "Growth",
+            "Identity",
+            "Reinvention",
+            "Imposter syndrome",
+            "Leadership",
+            "Following",
+            "Responsibility",
+            "Loyalty",
+            "Trust",
+            "Privacy",
+            "Social media",
+            "Comparison",
+            "Jealousy",
+            "Time",
+            "Aging",
+            "Health",
+            "Resilience",
+            "Patience",
+            "Luck",
+            "Preparation",
+            "Courage",
+            "Comfort zones",
+            "Failure in public",
+            "Success in private",
+            "Minimalism",
+            "Clutter",
+            "Rest",
+            "Hustle culture",
+            "Community",
+            "Loneliness",
+            "Saying no",
+            "Saying yes",
+            "The life you didn\u2019t choose"
+        ];
+
+        let isSpinning = false;
+        let lastTopicIndex = -1;
+
+        function getRandomIndex(exclude) {
+            let idx;
+            do {
+                idx = Math.floor(Math.random() * topics.length);
+            } while (idx === exclude);
+            return idx;
+        }
+
+        function generateTopic() {
+            if (isSpinning) return;
+            isSpinning = true;
+
+            // Initialize audio on first user gesture
+            ensureAudioContext();
+
+            const display = document.getElementById('topicDisplay');
+            const btn = document.getElementById('generateBtn');
+            const hint = document.getElementById('promptHint');
+
+            btn.disabled = true;
+            hint.classList.remove('visible');
+            display.classList.remove('settled');
+
+            // Pick the final topic ahead of time
+            const finalIndex = getRandomIndex(lastTopicIndex);
+            lastTopicIndex = finalIndex;
+
+            // Slot machine: fast ticks that gradually slow down
+            const totalTicks = 20 + Math.floor(Math.random() * 8);
+            let currentTick = 0;
+
+            function tick() {
+                currentTick++;
+                const progress = currentTick / totalTicks;
+
+                // Show a random topic (not the final one until the last tick)
+                let showIndex;
+                if (currentTick < totalTicks) {
+                    showIndex = getRandomIndex(finalIndex);
+                } else {
+                    showIndex = finalIndex;
+                }
+
+                display.classList.remove('spinning');
+                // Force reflow to restart animation
+                void display.offsetWidth;
+                display.textContent = topics[showIndex];
+                display.classList.add('spinning');
+
+                // Play tick sound with pitch/volume tied to progress
+                playTick(progress);
+
+                if (currentTick < totalTicks) {
+                    // Easing: starts fast, slows near end
+                    const eased = progress * progress * progress;
+                    const delay = 50 + eased * 350;
+                    setTimeout(tick, delay);
+                } else {
+                    // Final topic — settle animation + landing chime
+                    setTimeout(() => {
+                        display.classList.remove('spinning');
+                        display.classList.add('settled');
+                        playLand();
+                        btn.disabled = false;
+                        isSpinning = false;
+                        hint.classList.add('visible');
+                    }, 100);
+                }
+            }
+
+            tick();
+        }
+    </script>
+</body>
+</html>
