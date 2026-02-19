@@ -249,9 +249,44 @@
             align-items: center;
         }
 
+        .desktop-btn-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .spin-btn-desktop {
+            display: inline-block;
+            padding: 0.6rem 2.2rem;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #F9F5EB;
+            background: linear-gradient(135deg, #2A5A4E, #1A3C34);
+            border: 2px solid #1A3C34;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(26, 60, 52, 0.3);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .spin-btn-desktop:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(26, 60, 52, 0.4);
+        }
+
+        .spin-btn-desktop:active {
+            transform: scale(0.95);
+        }
+
+        .spin-btn-desktop:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .timer-btn-desktop {
             display: inline-block;
-            margin-top: 30px;
             padding: 0.6rem 2.2rem;
             font-family: 'Baloo 2', cursive;
             font-size: 1.1rem;
@@ -396,7 +431,7 @@
             .reel-strip.settled .reel-item.landed { transform: scale(1.5); }
             .slot-handle { display: none; }
             .mobile-spin-btn { display: block; margin-top: 3rem; }
-            .timer-btn-desktop { display: none; }
+            .desktop-btn-row { display: none; }
             .mobile-btn-row { display: flex; margin-top: 3rem; }
             .mobile-btn-row .mobile-spin-btn { margin-top: 0; }
             .timer-btn-mobile { display: block; }
@@ -426,7 +461,7 @@
             .reel-strip.settled .reel-item.landed { transform: scale(1.5); }
             .slot-handle { display: none; }
             .mobile-spin-btn { display: block; }
-            .timer-btn-desktop { display: none; }
+            .desktop-btn-row { display: none; }
             .mobile-btn-row { display: flex; }
             .mobile-btn-row .mobile-spin-btn { margin-top: 0; }
             .timer-btn-mobile { display: block; }
@@ -444,7 +479,7 @@
             .reel-strip.settled .reel-item.landed { transform: scale(1.2); }
             .slot-handle { display: none; }
             .mobile-spin-btn { display: block; }
-            .timer-btn-desktop { display: none; }
+            .desktop-btn-row { display: none; }
             .mobile-btn-row { display: flex; }
             .mobile-btn-row .mobile-spin-btn { margin-top: 0; }
             .timer-btn-mobile { display: block; }
@@ -465,7 +500,10 @@
                         <div class="reel-strip" id="reelStrip"></div>
                         <div class="reel-center-line" id="centerLine"></div>
                     </div>
-                    <a href="timer.html" class="timer-btn-desktop">Start Timer &rarr;</a>
+                    <div class="desktop-btn-row">
+                        <button class="spin-btn-desktop" id="desktopSpinBtn">Spin!</button>
+                        <a href="timer.html" class="timer-btn-desktop">Start Timer &rarr;</a>
+                    </div>
                 </div>
                 <div class="slot-handle" aria-hidden="true">
                     <img src="pull-lever.png" alt="Pull lever" class="pull-lever-hint" id="pullLeverHint">
@@ -926,9 +964,11 @@
             const topicWindow = document.getElementById('topicWindow');
             const handleArm = document.getElementById('handleArm');
             const mobileBtn = document.getElementById('mobileSpinBtn');
+            const desktopBtn = document.getElementById('desktopSpinBtn');
 
             if (handleArm) handleArm.classList.add('disabled');
             if (mobileBtn) mobileBtn.disabled = true;
+            if (desktopBtn) desktopBtn.disabled = true;
 
             const ITEM_HEIGHT = getItemHeight();
             const WINDOW_HEIGHT = topicWindow.offsetHeight;
@@ -1083,6 +1123,7 @@
                 playLand();
                 if (handleArm) handleArm.classList.remove('disabled');
                 if (mobileBtn) mobileBtn.disabled = false;
+                if (desktopBtn) desktopBtn.disabled = false;
                 isSpinning = false;
             }
 
@@ -1257,6 +1298,19 @@
         // --- Mobile Spin Button ---
         (function initMobileButton() {
             var btn = document.getElementById('mobileSpinBtn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function() {
+                if (isSpinning) return;
+                ensureAudioContext();
+                playHandleClunk();
+                generateTopic(30);
+            });
+        })();
+
+        // --- Desktop Spin Button ---
+        (function initDesktopSpinButton() {
+            var btn = document.getElementById('desktopSpinBtn');
             if (!btn) return;
 
             btn.addEventListener('click', function() {
