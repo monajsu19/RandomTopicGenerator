@@ -6,7 +6,7 @@
     <title>Impromptu - Random Topic Generator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -24,222 +24,465 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            zoom: 0.88;
         }
 
         .container {
-            text-align: center;
-            max-width: 800px;
+            max-width: 1400px;
             width: 100%;
-            padding: 2rem;
+            min-height: 100vh;
+            padding: calc(2rem + 50px) 3rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+        }
+
+        .left-panel {
+            flex: 0 0 auto;
+            width: 450px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
         }
 
-        .title {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.5rem;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            color: #1A3C34;
-            margin-bottom: 0.25rem;
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .subtitle {
-            font-size: 0.875rem;
-            color: #1A3C34;
+        .title-img {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle-img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
             opacity: 0.55;
-            font-weight: 400;
-            margin-bottom: 2rem;
-            letter-spacing: 0.01em;
+            margin-top: 2rem;
+        }
+
+        .reel-assembly {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            gap: 16px;
         }
 
         .topic-window {
             width: 100%;
-            height: 200px;
+            min-width: 0;
+            margin-top: 75px;
+            height: 390px;
+            position: relative;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+            box-shadow: inset 0 20px 30px -20px rgba(0,0,0,0.06), inset 0 -20px 30px -20px rgba(0,0,0,0.06);
+        }
+
+        /* --- Slot Lever Handle --- */
+        .slot-handle {
+            width: 60px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: visible;
+        }
+
+        .handle-pivot {
+            position: absolute;
+            bottom: 173px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #3A6A5E, #1A3C34);
+            border: 2px solid #1A3C34;
+            z-index: 4;
+        }
+
+        .handle-pivot::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #5A8A7E, #2A5A4E);
+        }
+
+        .handle-arm {
+            position: absolute;
+            bottom: 185px;
+            left: 50%;
+            margin-left: -3px;
+            width: 6px;
+            height: 80px;
+            transform-origin: center bottom;
+            transform: rotate(0deg);
+            z-index: 3;
+        }
+
+        .handle-shaft {
+            width: 6px;
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(to right, #2A5A4E, #1A3C34);
+        }
+
+        .handle-knob {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #E8D8FF, #D4C0F9 50%, #B89EE8);
+            border: 2px solid #1A3C34;
+            cursor: grab;
+            touch-action: none;
+            box-shadow: 0 2px 6px rgba(26, 60, 52, 0.2);
+            transition: box-shadow 0.15s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow: hidden;
-            margin: 1.5rem 0;
         }
 
-        .topic-display {
+        .handle-knob-grip {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 3px,
+                rgba(26, 60, 52, 0.15) 3px,
+                rgba(26, 60, 52, 0.15) 5px
+            );
+        }
+
+        .handle-knob:hover {
+            box-shadow: 0 4px 12px rgba(26, 60, 52, 0.3);
+        }
+
+        .handle-arm.grabbing .handle-knob {
+            cursor: grabbing;
+        }
+
+        .handle-arm.disabled .handle-knob {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .handle-arm.spring-back {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes leverHint {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(25deg); }
+        }
+
+        .handle-arm.hint {
+            animation: leverHint 0.6s ease-in-out 3;
+        }
+
+        .pull-lever-hint {
+            position: absolute;
+            bottom: 305px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: auto;
+            opacity: 0.55;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .pull-lever-hint.hidden {
+            opacity: 0;
+        }
+
+        .mobile-spin-btn {
+            display: none;
+            margin-top: 1.25rem;
+            padding: 0.85rem 2.5rem;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #F9F5EB;
+            background: linear-gradient(135deg, #2A5A4E, #1A3C34);
+            border: 2px solid #1A3C34;
+            border-radius: 50px;
+            cursor: pointer;
+            touch-action: manipulation;
+            box-shadow: 0 4px 12px rgba(26, 60, 52, 0.3);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .mobile-spin-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 6px rgba(26, 60, 52, 0.3);
+        }
+
+        .mobile-spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .topic-col {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timer-btn-desktop {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 0.6rem 2.2rem;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1A3C34;
+            background: transparent;
+            border: 2px solid #1A3C34;
+            border-radius: 50px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .timer-btn-desktop:hover {
+            background: #1A3C34;
+            color: #F9F5EB;
+        }
+
+        .mobile-btn-row {
+            display: none;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+            justify-content: center;
+        }
+
+        .mobile-btn-row .mobile-spin-btn {
+            display: block;
+            margin-top: 0;
+        }
+
+        .timer-btn-mobile {
+            display: none;
+            padding: 0.85rem 2.5rem;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1A3C34;
+            background: transparent;
+            border: 2px solid #1A3C34;
+            border-radius: 50px;
+            text-decoration: none;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .timer-btn-mobile:hover {
+            background: #1A3C34;
+            color: #F9F5EB;
+        }
+
+        .reel-strip {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            will-change: transform;
+        }
+
+        .reel-item {
+            height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
             font-family: 'DM Serif Display', serif;
-            font-size: 3.5rem;
+            font-size: 5rem;
             line-height: 1.15;
             color: #1A3C34;
             padding: 0 1rem;
-            transition: none;
             user-select: none;
+            white-space: nowrap;
         }
 
-        .topic-display.settled {
-            animation: settleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        .reel-center-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 130px;
+            border-top: 1px solid rgba(26, 60, 52, 0.08);
+            border-bottom: 1px solid rgba(26, 60, 52, 0.08);
+            pointer-events: none;
+            z-index: 2;
         }
 
-        .topic-display.spinning {
-            animation: slotTick 0.06s ease-in-out;
+        .reel-strip.settled .reel-item {
+            opacity: 0.3;
+            transform: scale(1);
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
-        @keyframes settleIn {
-            0% {
-                transform: translateY(-20px);
-                opacity: 0.5;
-            }
-            60% {
-                transform: translateY(4px);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slotTick {
-            0% {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .prompt-hint {
-            font-size: 0.8rem;
-            color: #1A3C34;
-            opacity: 0;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            margin-top: 0.5rem;
-            transition: opacity 0.5s ease;
-            height: 1.2rem;
-        }
-
-        .prompt-hint.visible {
-            opacity: 0.45;
-        }
-
-        .generate-btn {
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            font-weight: 500;
-            padding: 0.9rem 2.5rem;
-            border: 2px solid #1A3C34;
-            border-radius: 50px;
-            background-color: #D4C0F9;
-            color: #1A3C34;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            letter-spacing: 0.01em;
-            margin-top: 1rem;
+        .reel-strip.settled .reel-item.landed {
+            opacity: 1;
+            transform: scale(1.6);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+            z-index: 5;
             position: relative;
-            overflow: hidden;
         }
 
-        .generate-btn:hover {
-            background-color: #C5ADF0;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(26, 60, 52, 0.1);
+        .brand-badge {
+            position: fixed;
+            top: 1rem;
+            right: 1.5rem;
+            width: 330px;
+            height: auto;
+            opacity: 0.5;
+            z-index: 10;
         }
 
-        .generate-btn:active {
-            transform: translateY(0);
-            box-shadow: none;
-        }
-
-        .generate-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .generate-btn:disabled:hover {
-            transform: none;
-            box-shadow: none;
-            background-color: #D4C0F9;
-        }
-
-        .decorative-line {
-            width: 60px;
-            height: 3px;
-            background-color: #D4C0F9;
-            border-radius: 2px;
-            margin-top: 3rem;
-        }
-
-        /* Fade-in on load */
         .container {
             animation: fadeIn 0.8s ease forwards;
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive */
+        /* Tablet portrait: vertical layout with spin button */
+        @media (max-width: 1024px) and (orientation: portrait) {
+            body {
+                overflow-y: auto;
+                justify-content: flex-start;
+                zoom: 0.9;
+            }
+            .container {
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+                min-height: auto;
+            }
+            .left-panel { flex: 0 0 auto; width: auto; align-items: center; text-align: center; }
+            .right-panel { width: 100%; margin-top: 0; }
+            .title-img { max-width: 480px; }
+            .subtitle-img { max-width: 400px; margin-top: 1rem; }
+            .brand-badge { width: 180px; top: 0.5rem; right: 0.5rem; }
+            .reel-item { font-size: 2rem; height: 100px; }
+            .topic-window { height: 300px; min-width: 0; }
+            .reel-center-line { height: 100px; }
+            .reel-strip.settled .reel-item.landed { transform: scale(1.5); }
+            .slot-handle { display: none; }
+            .mobile-spin-btn { display: block; margin-top: 3rem; }
+            .timer-btn-desktop { display: none; }
+            .mobile-btn-row { display: flex; margin-top: 3rem; }
+            .mobile-btn-row .mobile-spin-btn { margin-top: 0; }
+            .timer-btn-mobile { display: block; }
+        }
+
+        /* Phone: vertical layout */
         @media (max-width: 768px) {
-            .topic-display {
-                font-size: 2.2rem;
+            body {
+                overflow-y: auto;
+                justify-content: flex-start;
+                zoom: 0.9;
             }
-
-            .topic-window {
-                height: 160px;
+            .container {
+                flex-direction: column;
+                padding: 2rem;
+                gap: 0.5rem;
+                min-height: auto;
             }
-
-            .title {
-                font-size: 1.3rem;
-            }
+            .left-panel { flex: 0 0 auto; width: auto; align-items: center; text-align: center; }
+            .right-panel { width: 100%; }
+            .title-img { max-width: 400px; }
+            .subtitle-img { max-width: 340px; margin-top: 0.25rem; }
+            .brand-badge { width: 180px; top: 0.5rem; right: 0.5rem; }
+            .reel-item { font-size: 2.6rem; height: 120px; }
+            .topic-window { height: 360px; min-width: 0; }
+            .reel-center-line { height: 120px; }
+            .reel-strip.settled .reel-item.landed { transform: scale(1.5); }
+            .slot-handle { display: none; }
+            .mobile-spin-btn { display: block; }
+            .timer-btn-desktop { display: none; }
+            .mobile-btn-row { display: flex; }
+            .mobile-btn-row .mobile-spin-btn { margin-top: 0; }
+            .timer-btn-mobile { display: block; }
         }
 
         @media (max-width: 480px) {
-            .topic-display {
-                font-size: 1.7rem;
-            }
-
-            .topic-window {
-                height: 140px;
-            }
-
-            .container {
-                padding: 1.5rem;
-            }
-
-            .generate-btn {
-                padding: 0.8rem 2rem;
-                font-size: 0.95rem;
-            }
+            .container { padding: 1rem 1rem 2rem; gap: 0.5rem; padding-top: 2.5rem; }
+            .title-img { max-width: 280px; }
+            .subtitle-img { width: 240px; margin-top: 0.25rem; }
+            .brand-badge { width: 120px; top: 0.5rem; right: 0.5rem; }
+            .reel-assembly { margin-left: -1rem; margin-right: -1rem; }
+            .reel-item { font-size: 2rem; height: 100px; padding: 0 0.5rem; }
+            .topic-window { height: 300px; }
+            .reel-center-line { height: 100px; }
+            .reel-strip.settled .reel-item.landed { transform: scale(1.2); }
+            .slot-handle { display: none; }
+            .mobile-spin-btn { display: block; }
+            .timer-btn-desktop { display: none; }
+            .mobile-btn-row { display: flex; }
+            .mobile-btn-row .mobile-spin-btn { margin-top: 0; }
+            .timer-btn-mobile { display: block; }
         }
     </style>
 </head>
 <body>
+    <img src="brand-badge.png" alt="Baby Steps to the Mic ©" class="brand-badge">
     <div class="container">
-        <h1 class="title">Impromptu</h1>
-        <p class="subtitle">One minute. One topic. Speak.</p>
-
-        <div class="topic-window">
-            <div class="topic-display" id="topicDisplay">Ready when you are.</div>
+        <div class="left-panel">
+            <img src="title.png" alt="Impromptu Speaking" class="title-img">
+            <img src="subtitle.png" alt="1) Pull lever to get topic 2) Set 1 min timer 3) Record & speak" class="subtitle-img">
         </div>
-
-        <p class="prompt-hint" id="promptHint">Speak for 60 seconds on this topic.</p>
-
-        <button class="generate-btn" id="generateBtn" onclick="generateTopic()">Generate Topic</button>
-
-        <div class="decorative-line"></div>
+        <div class="right-panel">
+            <div class="reel-assembly">
+                <div class="topic-col">
+                    <div class="topic-window" id="topicWindow">
+                        <div class="reel-strip" id="reelStrip"></div>
+                        <div class="reel-center-line" id="centerLine"></div>
+                    </div>
+                    <a href="timer.html" class="timer-btn-desktop">Start Timer &rarr;</a>
+                </div>
+                <div class="slot-handle" aria-hidden="true">
+                    <img src="pull-lever.png" alt="Pull lever" class="pull-lever-hint" id="pullLeverHint">
+                    <div class="handle-arm" id="handleArm">
+                        <div class="handle-knob" id="handleKnob">
+                            <div class="handle-knob-grip"></div>
+                        </div>
+                        <div class="handle-shaft"></div>
+                    </div>
+                    <div class="handle-pivot"></div>
+                </div>
+            </div>
+            <div class="mobile-btn-row">
+                <button class="mobile-spin-btn" id="mobileSpinBtn">Spin!</button>
+                <a href="timer.html" class="timer-btn-mobile">Timer</a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -256,7 +499,6 @@
         }
 
         function playTick(progress) {
-            // progress: 0 (start) to 1 (end) — pitch drops and softens as it slows
             ensureAudioContext();
             const now = audioCtx.currentTime;
 
@@ -264,7 +506,6 @@
             const gain = audioCtx.createGain();
             const filter = audioCtx.createBiquadFilter();
 
-            // Higher pitch at start, lower as it decelerates
             const freq = 1800 - progress * 900;
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(freq, now);
@@ -274,7 +515,6 @@
             filter.frequency.setValueAtTime(2500, now);
             filter.Q.setValueAtTime(2, now);
 
-            // Quick click envelope
             const volume = 0.08 + (1 - progress) * 0.06;
             gain.gain.setValueAtTime(volume, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
@@ -291,7 +531,6 @@
             ensureAudioContext();
             const now = audioCtx.currentTime;
 
-            // --- Chime 1: bright primary tone ---
             const osc1 = audioCtx.createOscillator();
             const gain1 = audioCtx.createGain();
             osc1.type = 'sine';
@@ -303,7 +542,6 @@
             osc1.start(now);
             osc1.stop(now + 0.65);
 
-            // --- Chime 2: harmonic fifth ---
             const osc2 = audioCtx.createOscillator();
             const gain2 = audioCtx.createGain();
             osc2.type = 'sine';
@@ -316,7 +554,6 @@
             osc2.start(now);
             osc2.stop(now + 0.55);
 
-            // --- Chime 3: upper octave shimmer ---
             const osc3 = audioCtx.createOscillator();
             const gain3 = audioCtx.createGain();
             osc3.type = 'sine';
@@ -330,6 +567,7 @@
             osc3.stop(now + 0.5);
         }
 
+        // --- Topics ---
         const topics = [
             "The fear of being average",
             "Coffee shops at 7 a.m.",
@@ -429,11 +667,245 @@
             "Loneliness",
             "Saying no",
             "Saying yes",
-            "The life you didn\u2019t choose"
+            "The life you didn\u2019t choose",
+            "The smell of old books",
+            "Airplane mode",
+            "Being on hold",
+            "The color yellow",
+            "Broken umbrellas",
+            "Window seats",
+            "The phrase \u201CI\u2019m fine\u201D",
+            "First impressions",
+            "Last impressions",
+            "The sound of typing",
+            "Paper cuts",
+            "Road trips",
+            "Name tags",
+            "Awkward hugs",
+            "Monday mornings",
+            "Friday afternoons",
+            "Expired coupons",
+            "Deleted photos",
+            "The mute button",
+            "Being copied on an email",
+            "Surprise parties",
+            "Secrets",
+            "D\u00E9j\u00E0 vu",
+            "Mispronouncing someone\u2019s name",
+            "Nicknames",
+            "Running late",
+            "Overpacking",
+            "Minimal effort",
+            "High expectations",
+            "The word \u201Csoon\u201D",
+            "Curtains",
+            "White lies",
+            "Awkward silences",
+            "Standing ovations",
+            "Whispering",
+            "Sarcasm",
+            "Accents",
+            "Texting vs calling",
+            "Autocorrect mistakes",
+            "The \u201Cseen\u201D notification",
+            "Being second choice",
+            "Loyalty tests",
+            "Complaining",
+            "Gratitude",
+            "Celebrations",
+            "The first snowfall",
+            "Summer nights",
+            "Empty notebooks",
+            "Productivity hacks",
+            "Alarm clocks",
+            "Online reviews",
+            "Refund policies",
+            "Traffic jams",
+            "Green lights",
+            "The word \u201Cdeserve\u201D",
+            "Haircuts",
+            "Losing your keys",
+            "Houseplants",
+            "Applause",
+            "Interruptions",
+            "Being talked over",
+            "Whisper networks",
+            "Stretching before a run",
+            "Cold showers",
+            "Gym mirrors",
+            "Making eye contact with strangers",
+            "Rainy Sundays",
+            "The smell of coffee",
+            "Budget airlines",
+            "Fine print",
+            "Contracts",
+            "Dead batteries",
+            "Birthday candles",
+            "Inside voices",
+            "The word \u201Clater\u201D",
+            "Being ignored",
+            "Long lines",
+            "Free samples",
+            "Open tabs",
+            "Algorithm feeds",
+            "Breaking routines",
+            "First apartments",
+            "Neighbors",
+            "Community events",
+            "Public speeches",
+            "Mic checks",
+            "Stage fright",
+            "Impulse purchases",
+            "Canceled subscriptions",
+            "The unsubscribe button",
+            "Icebreakers",
+            "Vision boards",
+            "Late-night thoughts",
+            "Dreams you remember",
+            "Dreams you forget",
+            "Early mornings",
+            "The last train home",
+            "Streetlights",
+            "Parallel lives",
+            "Missed opportunities",
+            "The word \u201Cenough\u201D",
+            "Group projects",
+            "Being the only one who notices",
+            "Silence in elevators",
+            "Tiny talk",
+            "Weather apps",
+            "Predictability",
+            "Surprise success",
+            "Underpromising",
+            "Overdelivering",
+            "Mediocrity",
+            "Greatness",
+            "Burned toast",
+            "Handwritten notes",
+            "Spam emails",
+            "Promotional discounts",
+            "Being misunderstood",
+            "Compliments you don\u2019t believe",
+            "Apologies you don\u2019t accept",
+            "Authority figures",
+            "Breaking rules",
+            "Following rules",
+            "Curiosity",
+            "Cynicism",
+            "The phrase \u201Cit depends\u201D",
+            "Patting yourself on the back",
+            "Overexplaining",
+            "Underexplaining",
+            "The word \u201Cmaybe\u201D",
+            "Sincerity",
+            "Saying goodbye",
+            "Saying hello",
+            "Micro-decisions",
+            "Big decisions",
+            "Superstitions",
+            "Rituals",
+            "Growing pains",
+            "Reinventing yourself",
+            "Being overlooked",
+            "Being spotlighted",
+            "Mentors",
+            "Rivals",
+            "Silent competition",
+            "Learning slowly",
+            "Learning fast",
+            "Pressure",
+            "Peace",
+            "Loud rooms",
+            "Quiet rooms",
+            "Background noise",
+            "The word \u201Cforever\u201D",
+            "The word \u201Ctemporary\u201D",
+            "Waiting for permission",
+            "Taking initiative",
+            "Applause that feels fake",
+            "Honest feedback",
+            "Brutal honesty",
+            "Soft skills",
+            "Hard truths",
+            "The cost of convenience",
+            "The price of comfort",
+            "Choosing stability",
+            "Choosing risk",
+            "Being replaced",
+            "Being irreplaceable",
+            "Time zones",
+            "Missed flights",
+            "Window shopping",
+            "Borrowed time",
+            "Side projects",
+            "Burn bridges",
+            "Building bridges",
+            "The word \u201Cwhy\u201D",
+            "The word \u201Cbecause\u201D",
+            "Being present",
+            "Multitasking",
+            "Daydreaming",
+            "Night walks",
+            "Private victories",
+            "Public failures",
+            "Discipline when no one is watching",
+            "Being the backup plan",
+            "The feeling of progress",
+            "The illusion of progress",
+            "Hidden talent",
+            "Untapped potential",
+            "Loyalty to yourself",
+            "The cost of saying yes",
+            "The power of saying no",
+            "Small improvements",
+            "Big promises",
+            "Being dependable",
+            "Being unpredictable",
+            "Learning to rest",
+            "Earning trust",
+            "Breaking trust",
+            "Self-doubt",
+            "Self-respect",
+            "The word \u201Cagain\u201D",
+            "Becoming who you avoided becoming"
         ];
 
+        // --- State ---
         let isSpinning = false;
         let lastTopicIndex = -1;
+        let animFrameId = null;
+
+        function getItemHeight() {
+            if (window.innerWidth <= 480) return 100;
+            if (window.innerWidth <= 768) return 120;
+            return 130;
+        }
+
+        function shuffleArray(arr) {
+            const shuffled = arr.slice();
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function fitTextToWidth(items, containerWidth) {
+            var w = window.innerWidth;
+            var maxFontSize = w <= 480 ? 2.0 : (w <= 768 ? 2.6 : 5.0);
+            var minFontSize = w <= 480 ? 1.2 : (w <= 768 ? 1.5 : 2.0);
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                item.style.fontSize = maxFontSize + 'rem';
+                if (item.scrollWidth > containerWidth) {
+                    var size = maxFontSize;
+                    while (size > minFontSize && item.scrollWidth > containerWidth) {
+                        size -= 0.15;
+                        item.style.fontSize = size + 'rem';
+                    }
+                }
+            }
+        }
 
         function getRandomIndex(exclude) {
             let idx;
@@ -443,70 +915,358 @@
             return idx;
         }
 
-        function generateTopic() {
+        function generateTopic(initialVelocity) {
             if (isSpinning) return;
             isSpinning = true;
-
-            // Initialize audio on first user gesture
+            if (animFrameId) cancelAnimationFrame(animFrameId);
             ensureAudioContext();
 
-            const display = document.getElementById('topicDisplay');
-            const btn = document.getElementById('generateBtn');
-            const hint = document.getElementById('promptHint');
+            const reelStrip = document.getElementById('reelStrip');
+            const centerLine = document.getElementById('centerLine');
+            const topicWindow = document.getElementById('topicWindow');
+            const handleArm = document.getElementById('handleArm');
+            const mobileBtn = document.getElementById('mobileSpinBtn');
 
-            btn.disabled = true;
-            hint.classList.remove('visible');
-            display.classList.remove('settled');
+            if (handleArm) handleArm.classList.add('disabled');
+            if (mobileBtn) mobileBtn.disabled = true;
 
-            // Pick the final topic ahead of time
+            const ITEM_HEIGHT = getItemHeight();
+            const WINDOW_HEIGHT = topicWindow.offsetHeight;
+
+            // Physics constants
+            const INITIAL_VELOCITY = initialVelocity || 40; // px per frame (at 60fps)
+            const FRICTION = 0.985;
+            const STOP_THRESHOLD = 1.5;
+
+            // Simulate physics to find where the reel naturally stops
+            let simVel = INITIAL_VELOCITY;
+            let simDist = 0;
+            while (simVel >= STOP_THRESHOLD) {
+                simDist += simVel;
+                simVel *= FRICTION;
+            }
+
+            // Which item index will be centered in the viewport at stop?
+            const centerAtStop = simDist + WINDOW_HEIGHT / 2;
+            const naturalIndex = Math.round((centerAtStop - ITEM_HEIGHT / 2) / ITEM_HEIGHT);
+            const LANDING_INDEX = naturalIndex + 1;
+
+            // Total items: enough before and after landing
+            const REEL_COUNT = LANDING_INDEX + 3;
+
+            // Pick the final topic
             const finalIndex = getRandomIndex(lastTopicIndex);
             lastTopicIndex = finalIndex;
+            const finalTopic = topics[finalIndex];
 
-            // Slot machine: fast ticks that gradually slow down
-            const totalTicks = 20 + Math.floor(Math.random() * 8);
-            let currentTick = 0;
+            // Build shuffled reel content
+            let reelTopics = [];
+            while (reelTopics.length < REEL_COUNT) {
+                reelTopics = reelTopics.concat(shuffleArray(topics));
+            }
+            reelTopics = reelTopics.slice(0, REEL_COUNT);
+            reelTopics[LANDING_INDEX] = finalTopic;
 
-            function tick() {
-                currentTick++;
-                const progress = currentTick / totalTicks;
+            // The Y translation that centers the landing item in viewport
+            const TARGET_Y = -(LANDING_INDEX * ITEM_HEIGHT + ITEM_HEIGHT / 2 - WINDOW_HEIGHT / 2);
 
-                // Show a random topic (not the final one until the last tick)
-                let showIndex;
-                if (currentTick < totalTicks) {
-                    showIndex = getRandomIndex(finalIndex);
-                } else {
-                    showIndex = finalIndex;
+            // Build DOM
+            reelStrip.innerHTML = '';
+            reelStrip.classList.remove('settled');
+            reelStrip.style.transition = '';
+            reelStrip.style.transform = 'translateY(0px)';
+            reelTopics.forEach(function(topic, i) {
+                const div = document.createElement('div');
+                div.className = 'reel-item';
+                div.style.height = ITEM_HEIGHT + 'px';
+                div.textContent = topic;
+                if (i === LANDING_INDEX) {
+                    div.setAttribute('data-landing', 'true');
                 }
+                reelStrip.appendChild(div);
+            });
 
-                display.classList.remove('spinning');
-                // Force reflow to restart animation
-                void display.offsetWidth;
-                display.textContent = topics[showIndex];
-                display.classList.add('spinning');
+            fitTextToWidth(reelStrip.children, topicWindow.offsetWidth - 32);
 
-                // Play tick sound with pitch/volume tied to progress
-                playTick(progress);
-
-                if (currentTick < totalTicks) {
-                    // Easing: starts fast, slows near end
-                    const eased = progress * progress * progress;
-                    const delay = 50 + eased * 350;
-                    setTimeout(tick, delay);
-                } else {
-                    // Final topic — settle animation + landing chime
-                    setTimeout(() => {
-                        display.classList.remove('spinning');
-                        display.classList.add('settled');
-                        playLand();
-                        btn.disabled = false;
-                        isSpinning = false;
-                        hint.classList.add('visible');
-                    }, 100);
+            // Style items based on distance from viewport center
+            function styleItemsByPosition(currentY) {
+                var viewportCenter = WINDOW_HEIGHT / 2;
+                var items = reelStrip.children;
+                for (var i = 0; i < items.length; i++) {
+                    var itemCenter = i * ITEM_HEIGHT + ITEM_HEIGHT / 2 + currentY;
+                    var dist = Math.abs(itemCenter - viewportCenter);
+                    var norm = Math.min(dist / ITEM_HEIGHT, 1);
+                    var scale = 1.6 - norm * 0.6;
+                    var opacity = 1 - norm * 0.7;
+                    items[i].style.transform = 'scale(' + scale + ')';
+                    items[i].style.opacity = opacity;
                 }
             }
 
-            tick();
+            // Animation state
+            let position = 0;
+            let velocity = INITIAL_VELOCITY;
+            let lastBoundaryIndex = 0;
+            let lastFrameTime = null;
+
+            function animate(timestamp) {
+                if (lastFrameTime === null) lastFrameTime = timestamp;
+                var rawDt = (timestamp - lastFrameTime) / 16.667;
+                var dt = Math.min(rawDt, 3);
+                lastFrameTime = timestamp;
+
+                if (dt === 0) {
+                    animFrameId = requestAnimationFrame(animate);
+                    return;
+                }
+
+                position += velocity * dt;
+                velocity *= Math.pow(FRICTION, dt);
+
+                reelStrip.style.transform = 'translateY(' + (-position) + 'px)';
+                styleItemsByPosition(-position);
+
+                var currentBoundaryIndex = Math.floor(position / ITEM_HEIGHT);
+                if (currentBoundaryIndex > lastBoundaryIndex) {
+                    var progress = 1 - (velocity / INITIAL_VELOCITY);
+                    playTick(Math.min(progress, 0.95));
+                    lastBoundaryIndex = currentBoundaryIndex;
+                }
+
+                if (velocity < STOP_THRESHOLD) {
+                    snapToTarget();
+                    return;
+                }
+
+                animFrameId = requestAnimationFrame(animate);
+            }
+
+            function snapToTarget() {
+                var startY = -position;
+                var distance = TARGET_Y - startY;
+                var startTime = performance.now();
+                var duration = 650;
+
+                function springAnimate(now) {
+                    var elapsed = now - startTime;
+                    var t = Math.min(elapsed / duration, 1);
+
+                    var spring = 1 - Math.exp(-7 * t) * Math.cos(5 * t);
+                    var y = startY + distance * spring;
+
+                    reelStrip.style.transform = 'translateY(' + y + 'px)';
+                    styleItemsByPosition(y);
+
+                    if (t < 1) {
+                        animFrameId = requestAnimationFrame(springAnimate);
+                    } else {
+                        reelStrip.style.transform = 'translateY(' + TARGET_Y + 'px)';
+                        onSettleComplete();
+                    }
+                }
+
+                animFrameId = requestAnimationFrame(springAnimate);
+            }
+
+            function onSettleComplete() {
+                reelStrip.classList.add('settled');
+                var landingItem = reelStrip.querySelector('[data-landing="true"]');
+                if (landingItem) {
+                    landingItem.classList.add('landed');
+                    var topicText = landingItem.textContent.trim();
+                    var timerUrl = 'timer.html?topic=' + encodeURIComponent(topicText);
+                    document.querySelectorAll('.timer-btn-desktop, .timer-btn-mobile').forEach(function(link) {
+                        link.href = timerUrl;
+                    });
+                }
+
+                playLand();
+                if (handleArm) handleArm.classList.remove('disabled');
+                if (mobileBtn) mobileBtn.disabled = false;
+                isSpinning = false;
+            }
+
+            // Start
+            animFrameId = requestAnimationFrame(animate);
         }
+
+        // --- Handle Release Clunk Sound ---
+        function playHandleClunk() {
+            ensureAudioContext();
+            const now = audioCtx.currentTime;
+
+            const bufferSize = audioCtx.sampleRate * 0.05;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+            }
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(600, now);
+            filter.Q.setValueAtTime(1, now);
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            noise.start(now);
+            noise.stop(now + 0.06);
+        }
+
+        // --- Slot Lever Drag Interaction ---
+        (function initLever() {
+            const arm = document.getElementById('handleArm');
+            const knob = document.getElementById('handleKnob');
+            if (!arm || !knob) return;
+
+            const MAX_ANGLE = 180;
+            const DRAG_SENSITIVITY = 280;
+
+            arm.classList.add('hint');
+            arm.addEventListener('animationend', function() {
+                arm.classList.remove('hint');
+            }, { once: true });
+
+            let isDragging = false;
+            let startY = 0;
+            let currentAngle = 0;
+            let hasMoved = false;
+
+            function resetLever() {
+                isDragging = false;
+                hasMoved = false;
+                currentAngle = 0;
+                arm.classList.remove('grabbing', 'spring-back');
+                knob.style.boxShadow = '';
+            }
+
+            knob.addEventListener('pointerdown', function(e) {
+                if (isSpinning) return;
+                if (arm.classList.contains('disabled')) return;
+
+                e.preventDefault();
+                knob.setPointerCapture(e.pointerId);
+                isDragging = true;
+                hasMoved = false;
+                arm.classList.add('grabbing');
+                arm.classList.remove('hint', 'spring-back');
+                arm.style.transition = '';
+                var pullHint = document.getElementById('pullLeverHint');
+                if (pullHint) pullHint.classList.add('hidden');
+
+                startY = e.clientY;
+                currentAngle = 0;
+
+                ensureAudioContext();
+            });
+
+            knob.addEventListener('pointermove', function(e) {
+                if (!isDragging) return;
+
+                var deltaY = Math.max(0, e.clientY - startY);
+                if (deltaY > 3) hasMoved = true;
+                currentAngle = Math.min(deltaY * (MAX_ANGLE / DRAG_SENSITIVITY), MAX_ANGLE);
+
+                arm.style.transform = 'rotate(' + currentAngle + 'deg)';
+
+                var progress = currentAngle / MAX_ANGLE;
+                var shadowBlur = 6 + progress * 14;
+                var shadowY = 2 + progress * 6;
+                knob.style.boxShadow = '0 ' + shadowY + 'px ' + shadowBlur + 'px rgba(26, 60, 52, ' + (0.2 + progress * 0.2) + ')';
+            });
+
+            function handleRelease(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                arm.classList.remove('grabbing');
+
+                var normalizedPull = currentAngle / MAX_ANGLE;
+
+                // Spring arm back
+                knob.style.boxShadow = '';
+                arm.classList.add('spring-back');
+                arm.style.transform = 'rotate(0deg)';
+                setTimeout(function() {
+                    arm.classList.remove('spring-back');
+                }, 600);
+
+                // Any drag movement or even a click triggers a spin
+                if (hasMoved || currentAngle > 0) {
+                    playHandleClunk();
+                    var mappedVelocity = 20 + Math.min(normalizedPull, 1) * 35;
+                    generateTopic(mappedVelocity);
+                } else {
+                    // Pure click with no movement — still trigger
+                    playHandleClunk();
+                    generateTopic(25);
+                }
+
+                currentAngle = 0;
+                hasMoved = false;
+            }
+
+            knob.addEventListener('pointerup', handleRelease);
+            knob.addEventListener('pointercancel', handleRelease);
+
+            // Fallback: if pointer events get lost, listen globally
+            document.addEventListener('pointerup', function() {
+                if (isDragging) {
+                    handleRelease();
+                }
+            });
+        })();
+
+        // --- Populate initial reel on load ---
+        (function initReel() {
+            var reelStrip = document.getElementById('reelStrip');
+            var topicWindow = document.getElementById('topicWindow');
+            var ITEM_HEIGHT = getItemHeight();
+            var WINDOW_HEIGHT = topicWindow.offsetHeight;
+            var visibleCount = 3;
+
+            var initialTopics = shuffleArray(topics).slice(0, visibleCount);
+
+            initialTopics.forEach(function(topic) {
+                var div = document.createElement('div');
+                div.className = 'reel-item';
+                div.style.height = ITEM_HEIGHT + 'px';
+                div.textContent = topic;
+                reelStrip.appendChild(div);
+            });
+
+            fitTextToWidth(reelStrip.children, topicWindow.offsetWidth - 32);
+
+            var middleIndex = 1;
+            var offsetY = -(middleIndex * ITEM_HEIGHT + ITEM_HEIGHT / 2 - WINDOW_HEIGHT / 2);
+            reelStrip.style.transform = 'translateY(' + offsetY + 'px)';
+
+            reelStrip.classList.add('settled');
+            var centerItem = reelStrip.children[middleIndex];
+            if (centerItem) centerItem.classList.add('landed');
+        })();
+
+        // --- Mobile Spin Button ---
+        (function initMobileButton() {
+            var btn = document.getElementById('mobileSpinBtn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function() {
+                if (isSpinning) return;
+                ensureAudioContext();
+                playHandleClunk();
+                generateTopic(30);
+            });
+        })();
     </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
