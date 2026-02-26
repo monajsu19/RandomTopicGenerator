@@ -1500,3 +1500,4 @@ const topics = [
     "The silence before the applause",
     "The exhale after it's over"
 ];
+topicsByLang.en = topics;
