@@ -347,6 +347,7 @@
         }
 
         .reel-item {
+            width: 100%;
             height: 130px;
             display: flex;
             align-items: center;
@@ -358,7 +359,8 @@
             color: #1A3C34;
             padding: 0 1rem;
             user-select: none;
-            white-space: nowrap;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
         }
 
         .reel-center-line {
@@ -484,6 +486,128 @@
             .mobile-btn-row .mobile-spin-btn { margin-top: 0; }
             .timer-btn-mobile { display: block; }
         }
+        /* --- Language Dropdown --- */
+        .lang-dropdown {
+            position: relative;
+            display: inline-block;
+            align-self: center;
+            margin-bottom: 0.5rem;
+            z-index: 20;
+            transform: translateX(-38px) translateY(20px); /* center over spinner, offset for 60px lever + 16px gap */
+        }
+
+        .lang-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.6rem 1.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1A3C34;
+            background: transparent;
+            border: 1.5px solid rgba(26, 60, 52, 0.25);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            user-select: none;
+        }
+
+        .lang-trigger:hover {
+            border-color: rgba(26, 60, 52, 0.5);
+            background: rgba(26, 60, 52, 0.04);
+        }
+
+        .lang-trigger .lang-flag {
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+
+        .lang-trigger .lang-chevron {
+            font-size: 0.6rem;
+            transition: transform 0.2s ease;
+        }
+
+        .lang-dropdown.open .lang-trigger .lang-chevron {
+            transform: rotate(180deg);
+        }
+
+        .lang-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 50%;
+            min-width: 180px;
+            background: #F9F5EB;
+            border: 1.5px solid rgba(26, 60, 52, 0.15);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(26, 60, 52, 0.12);
+            padding: 0.35rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-50%) translateY(-4px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        }
+
+        .lang-dropdown.open .lang-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1A3C34;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+
+        .lang-option:hover {
+            background: rgba(26, 60, 52, 0.06);
+        }
+
+        .lang-option .lang-flag {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .lang-option .lang-check {
+            margin-left: auto;
+            font-size: 0.75rem;
+            opacity: 0;
+            color: #2A5A4E;
+        }
+
+        .lang-option.selected .lang-check {
+            opacity: 1;
+        }
+
+        /* Chinese font override */
+        .lang-zh .reel-item {
+            font-family: 'Noto Serif SC', 'DM Serif Display', serif;
+        }
+
+        @media (max-width: 1024px) and (orientation: portrait) {
+            .lang-dropdown { align-self: center; transform: none; margin-top: 20px; }
+        }
+
+        @media (max-width: 768px) {
+            .lang-dropdown { align-self: center; transform: none; margin-top: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .lang-dropdown { align-self: center; transform: none; margin-top: 20px; }
+        }
+
     </style>
 </head>
 <body>
@@ -494,6 +618,35 @@
             <img src="subtitle.png" alt="1) Pull lever to get topic 2) Set 1 min timer 3) Record & speak" class="subtitle-img">
         </div>
         <div class="right-panel">
+            <div class="lang-dropdown" id="langDropdown">
+                <button class="lang-trigger" id="langTrigger">
+                    <span class="lang-flag" id="langFlag">🇺🇸</span>
+                    <span class="lang-code" id="langCode">EN</span>
+                    <span class="lang-chevron">▼</span>
+                </button>
+                <div class="lang-menu" id="langMenu">
+                    <button class="lang-option selected" data-lang="en" data-flag="🇺🇸" data-code="EN">
+                        <span class="lang-flag">🇺🇸</span> English
+                        <span class="lang-check">✓</span>
+                    </button>
+                    <button class="lang-option" data-lang="es" data-flag="🇪🇸" data-code="ES">
+                        <span class="lang-flag">🇪🇸</span> Español
+                        <span class="lang-check">✓</span>
+                    </button>
+                    <button class="lang-option" data-lang="fr" data-flag="🇫🇷" data-code="FR">
+                        <span class="lang-flag">🇫🇷</span> Français
+                        <span class="lang-check">✓</span>
+                    </button>
+                    <button class="lang-option" data-lang="de" data-flag="🇩🇪" data-code="DE">
+                        <span class="lang-flag">🇩🇪</span> Deutsch
+                        <span class="lang-check">✓</span>
+                    </button>
+                    <button class="lang-option" data-lang="zh" data-flag="🇨🇳" data-code="ZH">
+                        <span class="lang-flag">🇨🇳</span> 中文
+                        <span class="lang-check">✓</span>
+                    </button>
+                </div>
+            </div>
             <div class="reel-assembly">
                 <div class="topic-col">
                     <div class="topic-window" id="topicWindow">
@@ -523,8 +676,12 @@
         </div>
     </div>
 
+    <script>const topicsByLang = {};</script>
     <script src="topics.js"></script>
     <script>
+        // --- Language State ---
+        var activeTopics = topics;
+
         // --- Web Audio API Sound Engine ---
         let audioCtx = null;
 
@@ -629,16 +786,37 @@
 
         function fitTextToWidth(items, containerWidth) {
             var w = window.innerWidth;
-            var maxFontSize = w <= 480 ? 2.0 : (w <= 768 ? 2.6 : 5.0);
-            var minFontSize = w <= 480 ? 1.2 : (w <= 768 ? 1.5 : 2.0);
+            var maxFontSize = w <= 480 ? 1.6 : (w <= 768 ? 2.0 : 3.5);
+            var minFontSize = w <= 480 ? 1.0 : (w <= 768 ? 1.2 : 1.5);
+            var wrapThreshold = w <= 480 ? 10 : (w <= 768 ? 12 : 15);
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                item.style.fontSize = maxFontSize + 'rem';
-                if (item.scrollWidth > containerWidth) {
-                    var size = maxFontSize;
-                    while (size > minFontSize && item.scrollWidth > containerWidth) {
-                        size -= 0.15;
-                        item.style.fontSize = size + 'rem';
+                var text = item.textContent;
+                if (text.length > wrapThreshold) {
+                    // Split at the word boundary closest to the middle
+                    var mid = Math.floor(text.length / 2);
+                    var bestBreak = -1;
+                    for (var j = mid; j >= 0; j--) {
+                        if (text[j] === ' ') { bestBreak = j; break; }
+                    }
+                    if (bestBreak === -1) {
+                        for (var j = mid; j < text.length; j++) {
+                            if (text[j] === ' ') { bestBreak = j; break; }
+                        }
+                    }
+                    if (bestBreak > 0) {
+                        item.innerHTML = text.substring(0, bestBreak) + '<br>' + text.substring(bestBreak + 1);
+                    }
+                    item.style.fontSize = (maxFontSize * 0.55) + 'rem';
+                    item.style.lineHeight = '1.15';
+                } else {
+                    item.style.fontSize = maxFontSize + 'rem';
+                    if (item.scrollWidth > containerWidth) {
+                        var size = maxFontSize;
+                        while (size > minFontSize && item.scrollWidth > containerWidth) {
+                            size -= 0.15;
+                            item.style.fontSize = size + 'rem';
+                        }
                     }
                 }
             }
@@ -647,7 +825,7 @@
         function getRandomIndex(exclude) {
             let idx;
             do {
-                idx = Math.floor(Math.random() * topics.length);
+                idx = Math.floor(Math.random() * activeTopics.length);
             } while (idx === exclude);
             return idx;
         }
@@ -696,12 +874,12 @@
             // Pick the final topic
             const finalIndex = getRandomIndex(lastTopicIndex);
             lastTopicIndex = finalIndex;
-            const finalTopic = topics[finalIndex];
+            const finalTopic = activeTopics[finalIndex];
 
             // Build shuffled reel content
             let reelTopics = [];
             while (reelTopics.length < REEL_COUNT) {
-                reelTopics = reelTopics.concat(shuffleArray(topics));
+                reelTopics = reelTopics.concat(shuffleArray(activeTopics));
             }
             reelTopics = reelTopics.slice(0, REEL_COUNT);
             reelTopics[LANDING_INDEX] = finalTopic;
@@ -966,14 +1144,18 @@
         })();
 
         // --- Populate initial reel on load ---
-        (function initReel() {
+        function reinitReel() {
             var reelStrip = document.getElementById('reelStrip');
             var topicWindow = document.getElementById('topicWindow');
             var ITEM_HEIGHT = getItemHeight();
             var WINDOW_HEIGHT = topicWindow.offsetHeight;
             var visibleCount = 3;
 
-            var initialTopics = shuffleArray(topics).slice(0, visibleCount);
+            var initialTopics = shuffleArray(activeTopics).slice(0, visibleCount);
+
+            reelStrip.innerHTML = '';
+            reelStrip.classList.remove('settled');
+            reelStrip.style.transition = '';
 
             initialTopics.forEach(function(topic) {
                 var div = document.createElement('div');
@@ -992,7 +1174,8 @@
             reelStrip.classList.add('settled');
             var centerItem = reelStrip.children[middleIndex];
             if (centerItem) centerItem.classList.add('landed');
-        })();
+        }
+        reinitReel();
 
         // --- Mobile Spin Button ---
         (function initMobileButton() {
@@ -1018,6 +1201,104 @@
                 playHandleClunk();
                 generateTopic(30);
             });
+        })();
+
+        // --- Language Switching ---
+        var loadedLangs = { en: true };
+        var notoSerifLoaded = false;
+
+        function loadNotoSerifSC() {
+            if (notoSerifLoaded) return;
+            notoSerifLoaded = true;
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap';
+            document.head.appendChild(link);
+        }
+
+        function switchLanguage(lang) {
+            if (isSpinning) return;
+
+            var dropdown = document.getElementById('langDropdown');
+            var flagEl = document.getElementById('langFlag');
+            var codeEl = document.getElementById('langCode');
+            var options = document.querySelectorAll('.lang-option');
+
+            // Update dropdown UI
+            options.forEach(function(opt) {
+                opt.classList.remove('selected');
+                if (opt.getAttribute('data-lang') === lang) {
+                    opt.classList.add('selected');
+                    flagEl.textContent = opt.getAttribute('data-flag');
+                    codeEl.textContent = opt.getAttribute('data-code');
+                }
+            });
+
+            // Handle Chinese font class
+            var topicWindow = document.getElementById('topicWindow');
+            if (lang === 'zh') {
+                loadNotoSerifSC();
+                topicWindow.classList.add('lang-zh');
+            } else {
+                topicWindow.classList.remove('lang-zh');
+            }
+
+            // If already loaded, switch immediately
+            if (loadedLangs[lang]) {
+                activeTopics = topicsByLang[lang];
+                lastTopicIndex = -1;
+                reinitReel();
+                localStorage.setItem('impromptu-lang', lang);
+                return;
+            }
+
+            // Lazy-load the language file
+            var script = document.createElement('script');
+            script.src = 'topics-' + lang + '.js';
+            script.onload = function() {
+                loadedLangs[lang] = true;
+                activeTopics = topicsByLang[lang];
+                lastTopicIndex = -1;
+                reinitReel();
+                localStorage.setItem('impromptu-lang', lang);
+            };
+            document.head.appendChild(script);
+        }
+
+        // --- Language Dropdown Interaction ---
+        (function initLangDropdown() {
+            var dropdown = document.getElementById('langDropdown');
+            var trigger = document.getElementById('langTrigger');
+            var menu = document.getElementById('langMenu');
+
+            trigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+            });
+
+            menu.addEventListener('click', function(e) {
+                var option = e.target.closest('.lang-option');
+                if (!option) return;
+                var lang = option.getAttribute('data-lang');
+                switchLanguage(lang);
+                dropdown.classList.remove('open');
+            });
+
+            document.addEventListener('click', function() {
+                dropdown.classList.remove('open');
+            });
+
+            dropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        })();
+
+        // --- Restore saved language on load ---
+        (function restoreLang() {
+            var saved = localStorage.getItem('impromptu-lang');
+            if (saved && saved !== 'en') {
+                switchLanguage(saved);
+            }
         })();
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
