@@ -490,18 +490,19 @@
         .lang-dropdown {
             position: relative;
             display: inline-block;
-            align-self: flex-end;
+            align-self: center;
             margin-bottom: 0.5rem;
             z-index: 20;
+            transform: translateX(-38px) translateY(20px); /* center over spinner, offset for 60px lever + 16px gap */
         }
 
         .lang-trigger {
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 0.4rem 1rem;
+            padding: 0.6rem 1.5rem;
             font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
+            font-size: 1.05rem;
             font-weight: 600;
             color: #1A3C34;
             background: transparent;
@@ -518,7 +519,7 @@
         }
 
         .lang-trigger .lang-flag {
-            font-size: 1rem;
+            font-size: 1.3rem;
             line-height: 1;
         }
 
@@ -534,7 +535,7 @@
         .lang-menu {
             position: absolute;
             top: calc(100% + 6px);
-            right: 0;
+            left: 50%;
             min-width: 180px;
             background: #F9F5EB;
             border: 1.5px solid rgba(26, 60, 52, 0.15);
@@ -543,14 +544,14 @@
             padding: 0.35rem 0;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(-4px);
+            transform: translateX(-50%) translateY(-4px);
             transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
         }
 
         .lang-dropdown.open .lang-menu {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
         }
 
         .lang-option {
@@ -596,15 +597,15 @@
         }
 
         @media (max-width: 1024px) and (orientation: portrait) {
-            .lang-dropdown { align-self: center; }
+            .lang-dropdown { align-self: center; transform: none; }
         }
 
         @media (max-width: 768px) {
-            .lang-dropdown { align-self: center; }
+            .lang-dropdown { align-self: center; transform: none; }
         }
 
         @media (max-width: 480px) {
-            .lang-dropdown { align-self: center; }
+            .lang-dropdown { align-self: center; transform: none; }
         }
 
     </style>
