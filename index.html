@@ -486,14 +486,27 @@
             .mobile-btn-row .mobile-spin-btn { margin-top: 0; }
             .timer-btn-mobile { display: block; }
         }
+        /* --- Dropdown Row (language + difficulty) --- */
+        .dropdown-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            align-self: center;
+            margin-bottom: 0.5rem;
+            z-index: 20;
+            transform: translateX(-38px) translateY(20px);
+        }
+
         /* --- Language Dropdown --- */
         .lang-dropdown {
             position: relative;
             display: inline-block;
-            align-self: center;
-            margin-bottom: 0.5rem;
-            z-index: 20;
-            transform: translateX(-38px) translateY(20px); /* center over spinner, offset for 60px lever + 16px gap */
+        }
+
+        /* --- Difficulty Dropdown --- */
+        .diff-dropdown {
+            position: relative;
+            display: inline-block;
         }
 
         .lang-trigger {
@@ -591,21 +604,116 @@
             opacity: 1;
         }
 
+        .diff-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.6rem 1.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1A3C34;
+            background: transparent;
+            border: 1.5px solid rgba(26, 60, 52, 0.25);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            user-select: none;
+        }
+
+        .diff-trigger:hover {
+            border-color: rgba(26, 60, 52, 0.5);
+            background: rgba(26, 60, 52, 0.04);
+        }
+
+        .diff-trigger .diff-icon {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .diff-trigger .diff-chevron {
+            font-size: 0.6rem;
+            transition: transform 0.2s ease;
+        }
+
+        .diff-dropdown.open .diff-trigger .diff-chevron {
+            transform: rotate(180deg);
+        }
+
+        .diff-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 50%;
+            min-width: 180px;
+            background: #F9F5EB;
+            border: 1.5px solid rgba(26, 60, 52, 0.15);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(26, 60, 52, 0.12);
+            padding: 0.35rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-50%) translateY(-4px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        }
+
+        .diff-dropdown.open .diff-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .diff-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1A3C34;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+
+        .diff-option:hover {
+            background: rgba(26, 60, 52, 0.06);
+        }
+
+        .diff-option .diff-icon {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .diff-option .diff-check {
+            margin-left: auto;
+            font-size: 0.75rem;
+            opacity: 0;
+            color: #2A5A4E;
+        }
+
+        .diff-option.selected .diff-check {
+            opacity: 1;
+        }
+
         /* Chinese font override */
         .lang-zh .reel-item {
             font-family: 'Noto Serif SC', 'DM Serif Display', serif;
         }
 
         @media (max-width: 1024px) and (orientation: portrait) {
-            .lang-dropdown { align-self: center; transform: none; margin-top: 20px; }
+            .dropdown-row { align-self: center; transform: none; margin-top: 20px; }
         }
 
         @media (max-width: 768px) {
-            .lang-dropdown { align-self: center; transform: none; margin-top: 20px; }
+            .dropdown-row { align-self: center; transform: none; margin-top: 20px; }
         }
 
         @media (max-width: 480px) {
-            .lang-dropdown { align-self: center; transform: none; margin-top: 20px; }
+            .dropdown-row { align-self: center; transform: none; margin-top: 20px; }
         }
 
     </style>
@@ -618,33 +726,60 @@
             <img src="subtitle.png" alt="1) Pull lever to get topic 2) Set 1 min timer 3) Record & speak" class="subtitle-img">
         </div>
         <div class="right-panel">
-            <div class="lang-dropdown" id="langDropdown">
-                <button class="lang-trigger" id="langTrigger">
-                    <span class="lang-flag" id="langFlag">🇺🇸</span>
-                    <span class="lang-code" id="langCode">EN</span>
-                    <span class="lang-chevron">▼</span>
-                </button>
-                <div class="lang-menu" id="langMenu">
-                    <button class="lang-option selected" data-lang="en" data-flag="🇺🇸" data-code="EN">
-                        <span class="lang-flag">🇺🇸</span> English
-                        <span class="lang-check">✓</span>
+            <div class="dropdown-row">
+                <div class="lang-dropdown" id="langDropdown">
+                    <button class="lang-trigger" id="langTrigger">
+                        <span class="lang-flag" id="langFlag">🇺🇸</span>
+                        <span class="lang-code" id="langCode">EN</span>
+                        <span class="lang-chevron">▼</span>
                     </button>
-                    <button class="lang-option" data-lang="es" data-flag="🇪🇸" data-code="ES">
-                        <span class="lang-flag">🇪🇸</span> Español
-                        <span class="lang-check">✓</span>
+                    <div class="lang-menu" id="langMenu">
+                        <button class="lang-option selected" data-lang="en" data-flag="🇺🇸" data-code="EN">
+                            <span class="lang-flag">🇺🇸</span> English
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="es" data-flag="🇪🇸" data-code="ES">
+                            <span class="lang-flag">🇪🇸</span> Español
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="fr" data-flag="🇫🇷" data-code="FR">
+                            <span class="lang-flag">🇫🇷</span> Français
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="de" data-flag="🇩🇪" data-code="DE">
+                            <span class="lang-flag">🇩🇪</span> Deutsch
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="zh" data-flag="🇨🇳" data-code="ZH">
+                            <span class="lang-flag">🇨🇳</span> 中文
+                            <span class="lang-check">✓</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="diff-dropdown" id="diffDropdown">
+                    <button class="diff-trigger" id="diffTrigger">
+                        <span class="diff-icon" id="diffIcon">🎲</span>
+                        <span class="diff-label" id="diffLabel">Random</span>
+                        <span class="diff-chevron">▼</span>
                     </button>
-                    <button class="lang-option" data-lang="fr" data-flag="🇫🇷" data-code="FR">
-                        <span class="lang-flag">🇫🇷</span> Français
-                        <span class="lang-check">✓</span>
-                    </button>
-                    <button class="lang-option" data-lang="de" data-flag="🇩🇪" data-code="DE">
-                        <span class="lang-flag">🇩🇪</span> Deutsch
-                        <span class="lang-check">✓</span>
-                    </button>
-                    <button class="lang-option" data-lang="zh" data-flag="🇨🇳" data-code="ZH">
-                        <span class="lang-flag">🇨🇳</span> 中文
-                        <span class="lang-check">✓</span>
-                    </button>
+                    <div class="diff-menu" id="diffMenu">
+                        <button class="diff-option selected" data-diff="random" data-icon="🎲" data-label="Random">
+                            <span class="diff-icon">🎲</span> Random
+                            <span class="diff-check">✓</span>
+                        </button>
+                        <button class="diff-option" data-diff="easy" data-icon="🟢" data-label="Easy">
+                            <span class="diff-icon">🟢</span> Easy
+                            <span class="diff-check">✓</span>
+                        </button>
+                        <button class="diff-option" data-diff="medium" data-icon="🟡" data-label="Medium">
+                            <span class="diff-icon">🟡</span> Medium
+                            <span class="diff-check">✓</span>
+                        </button>
+                        <button class="diff-option" data-diff="hard" data-icon="🔴" data-label="Hard">
+                            <span class="diff-icon">🔴</span> Hard
+                            <span class="diff-check">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="reel-assembly">
@@ -679,8 +814,18 @@
     <script>const topicsByLang = {};</script>
     <script src="topics.js"></script>
     <script>
+        // --- Difficulty State ---
+        var currentDifficulty = localStorage.getItem('impromptu-difficulty') || 'random';
+
+        function computeActiveTopics(langTopics, difficulty) {
+            if (difficulty === 'easy') return langTopics.easy;
+            if (difficulty === 'medium') return langTopics.medium;
+            if (difficulty === 'hard') return langTopics.hard;
+            return langTopics.easy.concat(langTopics.medium, langTopics.hard);
+        }
+
         // --- Language State ---
-        var activeTopics = topics;
+        var activeTopics = computeActiveTopics(topicsByLang.en, currentDifficulty);
 
         // --- Web Audio API Sound Engine ---
         let audioCtx = null;
@@ -1204,6 +1349,7 @@
         })();
 
         // --- Language Switching ---
+        var currentLang = 'en';
         var loadedLangs = { en: true };
         var notoSerifLoaded = false;
 
@@ -1243,9 +1389,11 @@
                 topicWindow.classList.remove('lang-zh');
             }
 
+            currentLang = lang;
+
             // If already loaded, switch immediately
             if (loadedLangs[lang]) {
-                activeTopics = topicsByLang[lang];
+                activeTopics = computeActiveTopics(topicsByLang[lang], currentDifficulty);
                 lastTopicIndex = -1;
                 reinitReel();
                 localStorage.setItem('impromptu-lang', lang);
@@ -1257,7 +1405,7 @@
             script.src = 'topics-' + lang + '.js';
             script.onload = function() {
                 loadedLangs[lang] = true;
-                activeTopics = topicsByLang[lang];
+                activeTopics = computeActiveTopics(topicsByLang[lang], currentDifficulty);
                 lastTopicIndex = -1;
                 reinitReel();
                 localStorage.setItem('impromptu-lang', lang);
@@ -1273,6 +1421,7 @@
 
             trigger.addEventListener('click', function(e) {
                 e.stopPropagation();
+                document.getElementById('diffDropdown').classList.remove('open');
                 dropdown.classList.toggle('open');
             });
 
@@ -1293,11 +1442,70 @@
             });
         })();
 
-        // --- Restore saved language on load ---
-        (function restoreLang() {
-            var saved = localStorage.getItem('impromptu-lang');
-            if (saved && saved !== 'en') {
-                switchLanguage(saved);
+        // --- Difficulty Switching ---
+        function switchDifficulty(diff) {
+            if (isSpinning) return;
+
+            currentDifficulty = diff;
+
+            var iconEl = document.getElementById('diffIcon');
+            var labelEl = document.getElementById('diffLabel');
+            var options = document.querySelectorAll('.diff-option');
+
+            options.forEach(function(opt) {
+                opt.classList.remove('selected');
+                if (opt.getAttribute('data-diff') === diff) {
+                    opt.classList.add('selected');
+                    iconEl.textContent = opt.getAttribute('data-icon');
+                    labelEl.textContent = opt.getAttribute('data-label');
+                }
+            });
+
+            activeTopics = computeActiveTopics(topicsByLang[currentLang], currentDifficulty);
+            lastTopicIndex = -1;
+            reinitReel();
+            localStorage.setItem('impromptu-difficulty', diff);
+        }
+
+        // --- Difficulty Dropdown Interaction ---
+        (function initDiffDropdown() {
+            var dropdown = document.getElementById('diffDropdown');
+            var trigger = document.getElementById('diffTrigger');
+            var menu = document.getElementById('diffMenu');
+
+            trigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.getElementById('langDropdown').classList.remove('open');
+                dropdown.classList.toggle('open');
+            });
+
+            menu.addEventListener('click', function(e) {
+                var option = e.target.closest('.diff-option');
+                if (!option) return;
+                var diff = option.getAttribute('data-diff');
+                switchDifficulty(diff);
+                dropdown.classList.remove('open');
+            });
+
+            document.addEventListener('click', function() {
+                dropdown.classList.remove('open');
+            });
+
+            dropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        })();
+
+        // --- Restore saved language and difficulty on load ---
+        (function restoreSaved() {
+            var savedDiff = localStorage.getItem('impromptu-difficulty');
+            if (savedDiff && savedDiff !== 'random') {
+                switchDifficulty(savedDiff);
+            }
+
+            var savedLang = localStorage.getItem('impromptu-lang');
+            if (savedLang && savedLang !== 'en') {
+                switchLanguage(savedLang);
             }
         })();
     </script>
