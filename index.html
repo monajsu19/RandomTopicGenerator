@@ -990,7 +990,7 @@
                 var landingItem = reelStrip.querySelector('[data-landing="true"]');
                 if (landingItem) {
                     landingItem.classList.add('landed');
-                    var topicText = landingItem.textContent.trim();
+                    var topicText = landingItem.innerText.replace(/\n/g, ' ').trim();
                     var timerUrl = 'timer.html?topic=' + encodeURIComponent(topicText);
                     document.querySelectorAll('.timer-btn-desktop, .timer-btn-mobile').forEach(function(link) {
                         link.href = timerUrl;
