@@ -704,6 +704,11 @@
             justify-content: center;
         }
 
+        .lang-dropdown, .diff-dropdown, .cat-dropdown {
+            flex-shrink: 1;
+            min-width: 0;
+        }
+
         .cat-dropdown {
             position: relative;
         }
@@ -821,17 +826,22 @@
         }
 
         @media (max-width: 768px) {
-            .dropdown-row { align-self: center; transform: none; margin-top: 20px; }
+            .dropdown-row { align-self: center; transform: none; margin-top: 20px; gap: 0.35rem; }
+            .lang-trigger { padding: 0.45rem 0.9rem; font-size: 0.95rem; gap: 4px; }
+            .diff-trigger { padding: 0.45rem 0.9rem; font-size: 0.95rem; gap: 4px; }
+            .cat-trigger { padding: 0.45rem 0.9rem; font-size: 0.95rem; gap: 4px; }
         }
 
         @media (max-width: 480px) {
-            .dropdown-row { align-self: center; transform: none; margin-top: 20px; gap: 0.3rem; }
-            .lang-trigger { padding: 0.4rem 0.7rem; font-size: 0.85rem; gap: 4px; }
-            .lang-trigger .lang-flag { font-size: 1rem; }
-            .diff-trigger { padding: 0.4rem 0.7rem; font-size: 0.85rem; gap: 4px; }
-            .diff-trigger .diff-icon { font-size: 0.9rem; }
-            .cat-trigger { padding: 0.4rem 0.7rem; font-size: 0.85rem; gap: 4px; }
-            .cat-trigger .cat-icon { font-size: 0.9rem; }
+            .dropdown-row { align-self: center; transform: none; margin-top: 20px; gap: 0.25rem; }
+            .lang-trigger, .diff-trigger, .cat-trigger {
+                padding: 0.35rem 0.55rem; font-size: 0.8rem; gap: 3px;
+                white-space: nowrap; overflow: hidden;
+            }
+            .lang-trigger .lang-flag { font-size: 0.95rem; }
+            .diff-trigger .diff-icon { font-size: 0.85rem; }
+            .cat-trigger .cat-icon { font-size: 0.85rem; }
+            .lang-trigger .lang-chevron, .diff-trigger .diff-chevron, .cat-trigger .cat-chevron { font-size: 0.45rem; }
         }
 
     </style>
