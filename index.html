@@ -700,7 +700,7 @@
         }
 
         .dropdown-row {
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: center;
         }
 
@@ -825,9 +825,13 @@
         }
 
         @media (max-width: 480px) {
-            .dropdown-row { align-self: center; transform: none; margin-top: 20px; }
-            .cat-trigger { padding: 0.5rem 1rem; font-size: 0.95rem; }
-            .diff-trigger { padding: 0.5rem 1rem; font-size: 0.95rem; }
+            .dropdown-row { align-self: center; transform: none; margin-top: 20px; gap: 0.3rem; }
+            .lang-trigger { padding: 0.4rem 0.7rem; font-size: 0.85rem; gap: 4px; }
+            .lang-trigger .lang-flag { font-size: 1rem; }
+            .diff-trigger { padding: 0.4rem 0.7rem; font-size: 0.85rem; gap: 4px; }
+            .diff-trigger .diff-icon { font-size: 0.9rem; }
+            .cat-trigger { padding: 0.4rem 0.7rem; font-size: 0.85rem; gap: 4px; }
+            .cat-trigger .cat-icon { font-size: 0.9rem; }
         }
 
     </style>
