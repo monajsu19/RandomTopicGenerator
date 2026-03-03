@@ -550,6 +550,8 @@
             top: calc(100% + 6px);
             left: 50%;
             min-width: 180px;
+            max-height: 360px;
+            overflow-y: auto;
             background: #F9F5EB;
             border: 1.5px solid rgba(26, 60, 52, 0.15);
             border-radius: 12px;
@@ -818,9 +820,23 @@
             opacity: 1;
         }
 
-        /* Chinese font override */
+        /* CJK and non-Latin font overrides */
         .lang-zh .reel-item {
             font-family: 'Noto Serif SC', 'DM Serif Display', serif;
+        }
+        .lang-ja .reel-item {
+            font-family: 'Noto Serif JP', 'DM Serif Display', serif;
+        }
+        .lang-ko .reel-item {
+            font-family: 'Noto Serif KR', 'DM Serif Display', serif;
+        }
+        .lang-ar .reel-item,
+        .lang-ur .reel-item {
+            font-family: 'Noto Naskh Arabic', 'DM Serif Display', serif;
+            direction: rtl;
+        }
+        .lang-th .reel-item {
+            font-family: 'Noto Serif Thai', 'DM Serif Display', serif;
         }
 
         @media (max-width: 1024px) and (orientation: portrait) {
@@ -882,6 +898,34 @@
                         </button>
                         <button class="lang-option" data-lang="zh" data-flag="🇨🇳" data-code="ZH">
                             <span class="lang-flag">🇨🇳</span> 中文
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="it" data-flag="🇮🇹" data-code="IT">
+                            <span class="lang-flag">🇮🇹</span> Italiano
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="ar" data-flag="🇸🇦" data-code="AR">
+                            <span class="lang-flag">🇸🇦</span> العربية
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="pt" data-flag="🇧🇷" data-code="PT">
+                            <span class="lang-flag">🇧🇷</span> Português
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="ko" data-flag="🇰🇷" data-code="KO">
+                            <span class="lang-flag">🇰🇷</span> 한국어
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="ja" data-flag="🇯🇵" data-code="JA">
+                            <span class="lang-flag">🇯🇵</span> 日本語
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="th" data-flag="🇹🇭" data-code="TH">
+                            <span class="lang-flag">🇹🇭</span> ไทย
+                            <span class="lang-check">✓</span>
+                        </button>
+                        <button class="lang-option" data-lang="ur" data-flag="🇵🇰" data-code="UR">
+                            <span class="lang-flag">🇵🇰</span> اردو
                             <span class="lang-check">✓</span>
                         </button>
                     </div>
@@ -1013,7 +1057,7 @@
         var loadedCatLangs = { en: true };
 
         // Map from lang code to the global variable name the category file defines
-        var catVarNames = { es: 'topicsByCategoryEs', fr: 'topicsByCategoryFr', de: 'topicsByCategoryDe', zh: 'topicsByCategoryZh' };
+        var catVarNames = { es: 'topicsByCategoryEs', fr: 'topicsByCategoryFr', de: 'topicsByCategoryDe', zh: 'topicsByCategoryZh', it: 'topicsByCategoryIt', ar: 'topicsByCategoryAr', pt: 'topicsByCategoryPt', ko: 'topicsByCategoryKo', ja: 'topicsByCategoryJa', th: 'topicsByCategoryTh', ur: 'topicsByCategoryUr' };
 
         function getCategoryMap(lang) {
             return topicsByCategoryLang[lang] || null;
@@ -1615,16 +1659,25 @@
         // --- Language Switching ---
         var currentLang = 'en';
         var loadedLangs = { en: true };
-        var notoSerifLoaded = false;
+        var loadedFonts = {};
 
-        function loadNotoSerifSC() {
-            if (notoSerifLoaded) return;
-            notoSerifLoaded = true;
+        function loadGoogleFont(fontFamily, url) {
+            if (loadedFonts[fontFamily]) return;
+            loadedFonts[fontFamily] = true;
             var link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap';
+            link.href = url;
             document.head.appendChild(link);
         }
+
+        var langFontMap = {
+            zh: { family: 'Noto Serif SC', url: 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap' },
+            ja: { family: 'Noto Serif JP', url: 'https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap' },
+            ko: { family: 'Noto Serif KR', url: 'https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap' },
+            ar: { family: 'Noto Naskh Arabic', url: 'https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap' },
+            ur: { family: 'Noto Naskh Arabic', url: 'https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap' },
+            th: { family: 'Noto Serif Thai', url: 'https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;700&display=swap' }
+        };
 
         function switchLanguage(lang) {
             if (isSpinning) return;
@@ -1644,13 +1697,13 @@
                 }
             });
 
-            // Handle Chinese font class
+            // Handle non-Latin font classes
             var topicWindow = document.getElementById('topicWindow');
-            if (lang === 'zh') {
-                loadNotoSerifSC();
-                topicWindow.classList.add('lang-zh');
-            } else {
-                topicWindow.classList.remove('lang-zh');
+            var langClasses = ['lang-zh', 'lang-ja', 'lang-ko', 'lang-ar', 'lang-ur', 'lang-th'];
+            langClasses.forEach(function(cls) { topicWindow.classList.remove(cls); });
+            if (langFontMap[lang]) {
+                loadGoogleFont(langFontMap[lang].family, langFontMap[lang].url);
+                topicWindow.classList.add('lang-' + lang);
             }
 
             currentLang = lang;
