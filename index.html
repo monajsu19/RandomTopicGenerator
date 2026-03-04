@@ -982,7 +982,7 @@
         }
 
         .framework-card.expanded .framework-content {
-            max-height: 250px;
+            max-height: 300px;
             padding: 0 1.2rem 0.8rem;
         }
 
@@ -995,6 +995,115 @@
             padding-bottom: 0.2rem;
         }
 
+
+        /* --- Example Button & Popup --- */
+        .example-btn {
+            display: none;
+            width: auto;
+            padding: 0.5rem 1.4rem;
+            margin: 0.5rem auto 0;
+            background: #1A3C34;
+            color: #F9F5EB;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .example-btn.visible {
+            display: block;
+            animation: exampleBtnIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .example-btn:hover { opacity: 0.85; }
+
+        @keyframes exampleBtnIn {
+            0%   { opacity: 0; transform: scale(0.6); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .example-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(26,60,52,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .example-overlay.open {
+            display: flex;
+        }
+
+        .example-popup {
+            position: relative;
+            background: #F9F5EB;
+            border-radius: 1.2rem;
+            max-width: 560px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem 2rem 1.5rem;
+            animation: fwPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        }
+
+        .example-close {
+            position: absolute;
+            top: 0.7rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #f9f5eb;
+            cursor: pointer;
+            line-height: 1;
+            z-index: 1;
+        }
+        .example-close:hover { opacity: 0.6; }
+
+        .example-question {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #f9f5eb;
+            background: #135248;
+            margin: -2rem -2rem 1rem;
+            padding: 1rem 2rem;
+            padding-right: 2.5rem;
+            border-radius: 1.2rem 1.2rem 0 0;
+        }
+
+        .example-body {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: rgba(26,60,52,0.85);
+        }
+
+        .example-section {
+            margin-bottom: 0.8rem;
+        }
+
+        .example-section-label {
+            font-weight: 700;
+            color: #e4a959;
+            display: block;
+            margin-bottom: 0.15rem;
+        }
+
+        @media (max-width: 480px) {
+            .example-popup {
+                padding: 1.4rem 1.2rem 1rem;
+            }
+            .example-question {
+                font-size: 1rem;
+                margin: -1.4rem -1.2rem 1rem;
+                padding: 0.8rem 1.2rem;
+                padding-right: 2.2rem;
+            }
+            .example-body { font-size: 0.82rem; }
+        }
 
         /* --- Interview Mode Visibility --- */
         .title-img-interview               { display: none; }
@@ -1038,8 +1147,7 @@
                         <strong>S</strong> = Situation: Set the scene and context<br>
                         <strong>T</strong> = Task: Describe your responsibility<br>
                         <strong>A</strong> = Action: Explain what you did<br>
-                        <strong>R</strong> = Result: Share the outcome<br><br>
-                        Best for: "Tell me about a time..." questions
+                        <strong>R</strong> = Result: Share the outcome
                     </div>
                 </div>
                 <div class="framework-card" id="fwPrep" data-framework="prep">
@@ -1048,8 +1156,7 @@
                         <strong>P</strong> = Point: State your main point<br>
                         <strong>R</strong> = Reason: Explain why<br>
                         <strong>E</strong> = Example: Give a specific example<br>
-                        <strong>P</strong> = Point: Restate your point<br><br>
-                        Best for: Opinion and value questions
+                        <strong>P</strong> = Point: Restate your point
                     </div>
                 </div>
                 <div class="framework-card" id="fwPpf" data-framework="ppf">
@@ -1057,8 +1164,7 @@
                     <div class="framework-content">
                         <strong>P</strong> = Past: Where you've been<br>
                         <strong>P</strong> = Present: Where you are now<br>
-                        <strong>F</strong> = Future: Where you're headed<br><br>
-                        Best for: Narrative and trajectory questions
+                        <strong>F</strong> = Future: Where you're headed
                     </div>
                 </div>
                 <div class="framework-card" id="fwMece" data-framework="mece">
@@ -1072,6 +1178,7 @@
                         Best for: Case study and consulting questions
                     </div>
                 </div>
+                <button class="example-btn" id="exampleBtn" onclick="showExamplePopup()">Show me a sample answer</button>
             </div>
         </div>
         <div class="right-panel">
@@ -1245,6 +1352,14 @@
         </div>
     </div>
 
+    <div class="example-overlay" id="exampleOverlay">
+        <div class="example-popup">
+            <button class="example-close" id="exampleClose">&times;</button>
+            <div class="example-question" id="exampleQuestion"></div>
+            <div class="example-body" id="exampleBody"></div>
+        </div>
+    </div>
+
     <script>const topicsByLang = {};</script>
     <script src="topics.js"></script>
     <script src="topics-categories.js"></script>
@@ -1306,6 +1421,9 @@
 
         // --- Language State ---
         var activeTopics = computeActiveTopics('en', currentDifficulty, currentCategory);
+
+        // --- Example Popup State ---
+        var currentLandedQuestion = null;
 
         // --- Web Audio API Sound Engine ---
         let audioCtx = null;
@@ -1495,6 +1613,8 @@
             isSpinning = true;
             if (animFrameId) cancelAnimationFrame(animFrameId);
             ensureAudioContext();
+            currentLandedQuestion = null;
+            closeExamplePopup();
             if (currentMode === 'interview') {
                 collapseAllFrameworks();
                 hideRecommendation();
@@ -1662,11 +1782,16 @@
 
                     // Auto-expand recommended framework in interview mode
                     if (currentMode === 'interview') {
+                        currentLandedQuestion = topicText;
                         var framework = interviewFrameworkMap[topicText];
                         if (framework) {
                             var fwIdMap = { star: 'fwStar', prep: 'fwPrep', ppf: 'fwPpf', mece: 'fwMece' };
                             expandFramework(fwIdMap[framework]);
                             showRecommendation();
+                            if (interviewExamples[topicText]) {
+                                var btn = document.getElementById('exampleBtn');
+                                if (btn) btn.classList.add('visible');
+                            }
                         }
                     }
                 }
@@ -2133,7 +2258,13 @@
         // --- Interview Mode: Framework Expand/Collapse ---
         var originalCatMenuHTML = document.getElementById('catMenu').innerHTML;
 
+        function hideExampleBtn() {
+            var btn = document.getElementById('exampleBtn');
+            if (btn) btn.classList.remove('visible');
+        }
+
         function collapseAllFrameworks() {
+            hideExampleBtn();
             var cards = document.querySelectorAll('.framework-card');
             for (var i = 0; i < cards.length; i++) {
                 cards[i].classList.remove('expanded', 'highlighted', 'pop-in');
@@ -2298,6 +2429,55 @@
                 switchMode(savedMode);
             }
         })();
+
+        // --- Example Popup Logic ---
+        var frameworkLabels = {
+            star: { s: 'Situation', t: 'Task', a: 'Action', r: 'Result' },
+            prep: { p1: 'Point', r: 'Reason', e: 'Example', p2: 'Point (restate)' },
+            ppf:  { past: 'Past', present: 'Present', future: 'Future' }
+        };
+        var frameworkKeyOrder = {
+            star: ['s', 't', 'a', 'r'],
+            prep: ['p1', 'r', 'e', 'p2'],
+            ppf:  ['past', 'present', 'future']
+        };
+
+        function showExamplePopup() {
+            if (!currentLandedQuestion) return;
+            var example = interviewExamples[currentLandedQuestion];
+            if (!example) return;
+            var fw = interviewFrameworkMap[currentLandedQuestion];
+            if (!fw || !frameworkKeyOrder[fw]) return;
+
+            var questionEl = document.getElementById('exampleQuestion');
+            var bodyEl = document.getElementById('exampleBody');
+            questionEl.textContent = currentLandedQuestion;
+
+            var html = '';
+            var keys = frameworkKeyOrder[fw];
+            var labels = frameworkLabels[fw];
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                html += '<div class="example-section">';
+                html += '<span class="example-section-label">' + labels[key] + '</span>';
+                html += example[key];
+                html += '</div>';
+            }
+            bodyEl.innerHTML = html;
+            document.getElementById('exampleOverlay').classList.add('open');
+        }
+
+        function closeExamplePopup() {
+            document.getElementById('exampleOverlay').classList.remove('open');
+        }
+
+        document.getElementById('exampleClose').addEventListener('click', closeExamplePopup);
+        document.getElementById('exampleOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeExamplePopup();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeExamplePopup();
+        });
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
 </body>
