@@ -862,14 +862,217 @@
             .lang-trigger .lang-chevron, .diff-trigger .diff-chevron, .cat-trigger .cat-chevron { font-size: 0.45rem; }
         }
 
+        /* --- Tab Bar --- */
+        .tab-bar {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            padding: 5px;
+            background: rgba(26, 60, 52, 0.08);
+            border-radius: 50px;
+            z-index: 15;
+        }
+
+        .tab-btn {
+            padding: 0.6rem 1.8rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1A3C34;
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background: rgba(26, 60, 52, 0.06);
+        }
+
+        .tab-btn.active {
+            background: #F9F5EB;
+            box-shadow: 0 2px 6px rgba(26, 60, 52, 0.14);
+            color: #1A3C34;
+        }
+
+        /* --- Framework Buttons --- */
+        .framework-buttons {
+            display: none;
+            flex-direction: column;
+            gap: 0.6rem;
+            width: 100%;
+            max-width: 340px;
+            margin-top: 15px;
+        }
+
+        .framework-card {
+            border: 2px solid rgba(26, 60, 52, 0.25);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .framework-card.highlighted {
+            border-color: rgba(26, 60, 52, 0.6);
+            box-shadow: 0 4px 20px rgba(26, 60, 52, 0.25);
+        }
+
+        @keyframes fwPopIn {
+            0%   { transform: scale(0.92); opacity: 0.5; }
+            50%  { transform: scale(1.04); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .framework-card.pop-in {
+            animation: fwPopIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .framework-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 100%;
+            padding: 0.65rem 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1A3C34;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .fw-label-img {
+            height: 2.2rem;
+            width: auto;
+        }
+
+
+        .framework-toggle:hover {
+            background: rgba(26, 60, 52, 0.04);
+        }
+
+        .framework-toggle .fw-chevron {
+            position: absolute;
+            right: 1rem;
+            font-size: 0.85rem;
+            transition: transform 0.3s ease;
+        }
+
+        .framework-card.expanded .framework-toggle .fw-chevron {
+            transform: rotate(180deg);
+        }
+
+        .framework-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+            padding: 0 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: rgba(26, 60, 52, 0.8);
+        }
+
+        .framework-card.expanded .framework-content {
+            max-height: 250px;
+            padding: 0 1.2rem 0.8rem;
+        }
+
+        .fw-heading {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1A3C34;
+            text-align: center;
+            padding-bottom: 0.2rem;
+        }
+
+
+        /* --- Interview Mode Visibility --- */
+        .title-img-interview               { display: none; }
+        .mode-interview .title-img-topics  { display: none; }
+        .mode-interview .title-img-interview { display: block; }
+        .mode-interview .subtitle-img      { display: none; }
+        .mode-interview .lang-dropdown     { display: none; }
+        .mode-interview .diff-dropdown     { display: none; }
+        .mode-interview .framework-buttons { display: flex; }
+
+        /* --- Tab Bar Responsive --- */
+        @media (max-width: 768px) {
+            .tab-btn { padding: 0.5rem 1.2rem; font-size: 0.92rem; }
+            .framework-buttons { max-width: 340px; }
+        }
+        @media (max-width: 480px) {
+            .tab-btn { padding: 0.45rem 1rem; font-size: 0.82rem; }
+            .framework-buttons { max-width: 280px; }
+            .framework-toggle { padding: 0.55rem 1rem; font-size: 0.85rem; }
+            .framework-content { font-size: 0.75rem; }
+        }
+
     </style>
 </head>
 <body>
+    <div class="tab-bar" id="tabBar">
+        <button class="tab-btn active" data-tab="topics">Random Topics</button>
+        <button class="tab-btn" data-tab="interview">Interview Prep</button>
+    </div>
     <img src="brand-badge.png" alt="Baby Steps to the Mic ©" class="brand-badge">
     <div class="container">
         <div class="left-panel">
-            <img src="title.png" alt="Impromptu Speaking" class="title-img">
+            <img src="title.png" alt="Impromptu Speaking" class="title-img title-img-topics">
+            <img src="interviewprep.png" alt="Interview Prep" class="title-img title-img-interview">
             <img src="subtitle.png" alt="1) Pull lever to get topic 2) Set 1 min timer 3) Record & speak" class="subtitle-img">
+            <div class="framework-buttons" id="frameworkButtons">
+                <div class="fw-heading" id="fwHeading">Frameworks</div>
+                <div class="framework-card" id="fwStar" data-framework="star">
+                    <button class="framework-toggle"><img src="fw-star.png" alt="STAR" class="fw-label-img"> <span class="fw-chevron">&#9660;</span></button>
+                    <div class="framework-content">
+                        <strong>S</strong> = Situation: Set the scene and context<br>
+                        <strong>T</strong> = Task: Describe your responsibility<br>
+                        <strong>A</strong> = Action: Explain what you did<br>
+                        <strong>R</strong> = Result: Share the outcome<br><br>
+                        Best for: "Tell me about a time..." questions
+                    </div>
+                </div>
+                <div class="framework-card" id="fwPrep" data-framework="prep">
+                    <button class="framework-toggle"><img src="fw-prep.png" alt="PREP" class="fw-label-img"> <span class="fw-chevron">&#9660;</span></button>
+                    <div class="framework-content">
+                        <strong>P</strong> = Point: State your main point<br>
+                        <strong>R</strong> = Reason: Explain why<br>
+                        <strong>E</strong> = Example: Give a specific example<br>
+                        <strong>P</strong> = Point: Restate your point<br><br>
+                        Best for: Opinion and value questions
+                    </div>
+                </div>
+                <div class="framework-card" id="fwPpf" data-framework="ppf">
+                    <button class="framework-toggle"><img src="fw-ppf.png" alt="PPF" class="fw-label-img"> <span class="fw-chevron">&#9660;</span></button>
+                    <div class="framework-content">
+                        <strong>P</strong> = Past: Where you've been<br>
+                        <strong>P</strong> = Present: Where you are now<br>
+                        <strong>F</strong> = Future: Where you're headed<br><br>
+                        Best for: Narrative and trajectory questions
+                    </div>
+                </div>
+                <div class="framework-card" id="fwMece" data-framework="mece">
+                    <button class="framework-toggle">MECE <span class="fw-chevron">&#9660;</span></button>
+                    <div class="framework-content">
+                        <strong>M</strong>utually <strong>E</strong>xclusive: No overlapping buckets<br>
+                        <strong>C</strong>ollectively <strong>E</strong>xhaustive: Nothing is left out<br><br>
+                        1. Break the problem into distinct categories<br>
+                        2. Ensure categories cover everything<br>
+                        3. Drill into each bucket systematically<br><br>
+                        Best for: Case study and consulting questions
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="right-panel">
             <div class="dropdown-row">
@@ -1045,7 +1248,11 @@
     <script>const topicsByLang = {};</script>
     <script src="topics.js"></script>
     <script src="topics-categories.js"></script>
+    <script src="topics-interview.js"></script>
     <script>
+        // --- Mode State ---
+        var currentMode = localStorage.getItem('impromptu-mode') || 'topics';
+
         // --- Difficulty State ---
         var currentDifficulty = localStorage.getItem('impromptu-difficulty') || 'random';
 
@@ -1288,6 +1495,10 @@
             isSpinning = true;
             if (animFrameId) cancelAnimationFrame(animFrameId);
             ensureAudioContext();
+            if (currentMode === 'interview') {
+                collapseAllFrameworks();
+                hideRecommendation();
+            }
 
             const reelStrip = document.getElementById('reelStrip');
             const centerLine = document.getElementById('centerLine');
@@ -1448,6 +1659,16 @@
                     document.querySelectorAll('.timer-btn-desktop, .timer-btn-mobile').forEach(function(link) {
                         link.href = timerUrl;
                     });
+
+                    // Auto-expand recommended framework in interview mode
+                    if (currentMode === 'interview') {
+                        var framework = interviewFrameworkMap[topicText];
+                        if (framework) {
+                            var fwIdMap = { star: 'fwStar', prep: 'fwPrep', ppf: 'fwPpf', mece: 'fwMece' };
+                            expandFramework(fwIdMap[framework]);
+                            showRecommendation();
+                        }
+                    }
                 }
 
                 playLand();
@@ -1843,8 +2064,6 @@
         function switchCategory(cat) {
             if (isSpinning) return;
 
-            currentCategory = cat;
-
             var iconEl = document.getElementById('catIcon');
             var labelEl = document.getElementById('catLabel');
             var options = document.querySelectorAll('.cat-option');
@@ -1858,6 +2077,23 @@
                 }
             });
 
+            // Interview mode category switching
+            if (currentMode === 'interview') {
+                collapseAllFrameworks();
+                hideRecommendation();
+                if (cat === 'consulting') {
+                    activeTopics = consultingTopicStrings;
+                } else {
+                    activeTopics = interviewTopicStrings;
+                }
+                showInterviewFrameworks(cat);
+                lastTopicIndex = -1;
+                reinitReel();
+                localStorage.setItem('impromptu-interview-cat', cat);
+                return;
+            }
+
+            currentCategory = cat;
             activeTopics = computeActiveTopics(currentLang, currentDifficulty, currentCategory);
             lastTopicIndex = -1;
             reinitReel();
@@ -1894,6 +2130,152 @@
             });
         })();
 
+        // --- Interview Mode: Framework Expand/Collapse ---
+        var originalCatMenuHTML = document.getElementById('catMenu').innerHTML;
+
+        function collapseAllFrameworks() {
+            var cards = document.querySelectorAll('.framework-card');
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].classList.remove('expanded', 'highlighted', 'pop-in');
+            }
+        }
+
+        function expandFramework(cardId) {
+            collapseAllFrameworks();
+            var card = document.getElementById(cardId);
+            if (card) {
+                card.classList.add('expanded', 'highlighted', 'pop-in');
+            }
+        }
+
+        function showRecommendation() {
+            var el = document.getElementById('fwHeading');
+            if (el) el.textContent = 'Recommended for this question';
+        }
+
+        function hideRecommendation() {
+            var el = document.getElementById('fwHeading');
+            if (el) el.textContent = 'Frameworks';
+        }
+
+        // Toggle framework cards on click
+        (function initFrameworkToggles() {
+            var cards = document.querySelectorAll('.framework-card');
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].querySelector('.framework-toggle').addEventListener('click', (function(card) {
+                    return function() {
+                        if (card.classList.contains('expanded')) {
+                            card.classList.remove('expanded', 'highlighted');
+                        } else {
+                            collapseAllFrameworks();
+                            card.classList.add('expanded');
+                        }
+                    };
+                })(cards[i]));
+            }
+        })();
+
+        // --- Show/Hide Framework Cards by Interview Category ---
+        document.getElementById('fwMece').style.display = 'none';
+
+        function showInterviewFrameworks(interviewCat) {
+            var fwStar = document.getElementById('fwStar');
+            var fwPrep = document.getElementById('fwPrep');
+            var fwPpf = document.getElementById('fwPpf');
+            var fwMece = document.getElementById('fwMece');
+            if (interviewCat === 'consulting') {
+                fwStar.style.display = 'none';
+                fwPrep.style.display = 'none';
+                fwPpf.style.display = 'none';
+                fwMece.style.display = '';
+            } else {
+                fwStar.style.display = '';
+                fwPrep.style.display = '';
+                fwPpf.style.display = '';
+                fwMece.style.display = 'none';
+            }
+        }
+
+        // --- Mode Switching ---
+        function switchMode(mode) {
+            if (isSpinning) return;
+            currentMode = mode;
+
+            var container = document.querySelector('.container');
+            var tabBtns = document.querySelectorAll('.tab-btn');
+            var catMenu = document.getElementById('catMenu');
+            var catIcon = document.getElementById('catIcon');
+            var catLabel = document.getElementById('catLabel');
+
+            // Update tab active states
+            for (var i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove('active');
+                if (tabBtns[i].getAttribute('data-tab') === mode) {
+                    tabBtns[i].classList.add('active');
+                }
+            }
+
+            // Collapse frameworks and hide recommendation
+            collapseAllFrameworks();
+            hideRecommendation();
+
+            if (mode === 'interview') {
+                container.classList.add('mode-interview');
+
+                // Swap category dropdown to interview categories
+                var savedInterviewCat = localStorage.getItem('impromptu-interview-cat') || 'behavioral';
+                catMenu.innerHTML = '<button class="cat-option' + (savedInterviewCat === 'behavioral' ? ' selected' : '') + '" data-cat="behavioral" data-icon="\uD83D\uDCAC" data-label="Top 50 Behavioral"><span class="cat-icon">\uD83D\uDCAC</span> Top 50 Behavioral<span class="cat-check">\u2713</span></button>' +
+                    '<button class="cat-option' + (savedInterviewCat === 'consulting' ? ' selected' : '') + '" data-cat="consulting" data-icon="\uD83D\uDCBC" data-label="Top 50 Consulting"><span class="cat-icon">\uD83D\uDCBC</span> Top 50 Consulting<span class="cat-check">\u2713</span></button>';
+
+                if (savedInterviewCat === 'consulting') {
+                    activeTopics = consultingTopicStrings;
+                    catIcon.textContent = '\uD83D\uDCBC';
+                    catLabel.textContent = 'Top 50 Consulting';
+                } else {
+                    activeTopics = interviewTopicStrings;
+                    catIcon.textContent = '\uD83D\uDCAC';
+                    catLabel.textContent = 'Top 50 Behavioral';
+                }
+                showInterviewFrameworks(savedInterviewCat);
+            } else {
+                container.classList.remove('mode-interview');
+
+                // Restore original category menu
+                catMenu.innerHTML = originalCatMenuHTML;
+
+                // Restore saved category selection UI
+                var savedCat = currentCategory;
+                var options = catMenu.querySelectorAll('.cat-option');
+                for (var j = 0; j < options.length; j++) {
+                    options[j].classList.remove('selected');
+                    if (options[j].getAttribute('data-cat') === savedCat) {
+                        options[j].classList.add('selected');
+                        catIcon.textContent = options[j].getAttribute('data-icon');
+                        catLabel.textContent = options[j].getAttribute('data-label');
+                    }
+                }
+
+                activeTopics = computeActiveTopics(currentLang, currentDifficulty, currentCategory);
+            }
+
+            lastTopicIndex = -1;
+            reinitReel();
+            localStorage.setItem('impromptu-mode', mode);
+        }
+
+        // --- Tab Bar Interaction ---
+        (function initTabBar() {
+            var tabBar = document.getElementById('tabBar');
+            tabBar.addEventListener('click', function(e) {
+                var btn = e.target.closest('.tab-btn');
+                if (!btn) return;
+                var tab = btn.getAttribute('data-tab');
+                if (tab && tab !== currentMode) {
+                    switchMode(tab);
+                }
+            });
+        })();
+
         // --- Restore saved language, difficulty, and category on load ---
         (function restoreSaved() {
             var savedCat = localStorage.getItem('impromptu-category');
@@ -1909,6 +2291,11 @@
             var savedLang = localStorage.getItem('impromptu-lang');
             if (savedLang && savedLang !== 'en') {
                 switchLanguage(savedLang);
+            }
+
+            var savedMode = localStorage.getItem('impromptu-mode');
+            if (savedMode && savedMode !== 'topics') {
+                switchMode(savedMode);
             }
         })();
     </script>
