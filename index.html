@@ -2434,12 +2434,14 @@
         var frameworkLabels = {
             star: { s: 'Situation', t: 'Task', a: 'Action', r: 'Result' },
             prep: { p1: 'Point', r: 'Reason', e: 'Example', p2: 'Point (restate)' },
-            ppf:  { past: 'Past', present: 'Present', future: 'Future' }
+            ppf:  { past: 'Past', present: 'Present', future: 'Future' },
+            mece: { buckets: 'Buckets', analysis: 'Analysis', recommendation: 'Recommendation' }
         };
         var frameworkKeyOrder = {
             star: ['s', 't', 'a', 'r'],
             prep: ['p1', 'r', 'e', 'p2'],
-            ppf:  ['past', 'present', 'future']
+            ppf:  ['past', 'present', 'future'],
+            mece: ['buckets', 'analysis', 'recommendation']
         };
 
         function showExamplePopup() {
