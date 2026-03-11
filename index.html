@@ -400,6 +400,14 @@
             z-index: 10;
         }
 
+        .brand-badge-mobile {
+            display: none;
+            width: 180px;
+            height: auto;
+            opacity: 0.8;
+            margin: 1.5rem auto 0;
+        }
+
         .container {
             animation: fadeIn 0.8s ease forwards;
         }
@@ -411,6 +419,7 @@
 
         /* Tablet portrait: vertical layout with spin button */
         @media (max-width: 1024px) and (orientation: portrait) {
+            .tab-bar { position: static !important; transform: none !important; margin: 1rem auto 0; z-index: auto; left: auto; top: auto; }
             body {
                 overflow-y: auto;
                 justify-content: flex-start;
@@ -419,6 +428,7 @@
             .container {
                 flex-direction: column;
                 padding: 2rem;
+                padding-top: 0.5rem;
                 gap: 1.5rem;
                 min-height: auto;
             }
@@ -426,7 +436,8 @@
             .right-panel { width: 100%; margin-top: 0; }
             .title-img { max-width: 480px; }
             .subtitle-img { max-width: 400px; margin-top: 1rem; }
-            .brand-badge { width: 180px; top: 0.5rem; right: 0.5rem; }
+            .brand-badge { display: none; }
+            .brand-badge-mobile { display: block; width: 180px; }
             .reel-item { font-size: 2rem; height: 100px; }
             .topic-window { height: 300px; min-width: 0; margin-top: 0; }
             .reel-center-line { height: 100px; }
@@ -441,7 +452,7 @@
 
         /* Phone: vertical layout */
         @media (max-width: 768px) {
-            .tab-bar { position: static; transform: none; margin: 1rem auto 0; }
+            .tab-bar { position: static !important; transform: none !important; margin: 1rem auto 0; z-index: auto; left: auto; top: auto; }
             body {
                 overflow-y: auto;
                 justify-content: flex-start;
@@ -458,7 +469,8 @@
             .right-panel { width: 100%; }
             .title-img { max-width: 400px; }
             .subtitle-img { max-width: 340px; margin-top: 0.25rem; }
-            .brand-badge { position: fixed; width: 180px; top: auto; bottom: 0.5rem; right: 0.5rem; }
+            .brand-badge { display: none; }
+            .brand-badge-mobile { display: block; width: 180px; }
             .reel-item { font-size: 2.6rem; height: 120px; }
             .topic-window { height: 360px; min-width: 0; margin-top: 0; }
             .reel-center-line { height: 120px; }
@@ -475,7 +487,7 @@
             .container { padding: 1rem 1rem 2rem; gap: 0.5rem; padding-top: 0.5rem; }
             .title-img { max-width: 280px; }
             .subtitle-img { width: 240px; margin-top: 0.25rem; }
-            .brand-badge { width: 120px; bottom: 0.5rem; right: 0.5rem; }
+            .brand-badge-mobile { width: 120px; }
             .reel-assembly { margin-left: -1rem; margin-right: -1rem; }
             .reel-item { font-size: 2rem; height: 100px; padding: 0 0.5rem; }
             .topic-window { height: 300px; margin-top: 0; }
@@ -1483,6 +1495,7 @@
                 <button class="mobile-spin-btn" id="mobileSpinBtn">Spin!</button>
                 <a href="timer.html" class="timer-btn-mobile">Timer</a>
             </div>
+            <img src="brand-badge.png" alt="Baby Steps to the Mic ©" class="brand-badge-mobile">
         </div>
     </div>
 
