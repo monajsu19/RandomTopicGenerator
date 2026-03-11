@@ -441,6 +441,7 @@
 
         /* Phone: vertical layout */
         @media (max-width: 768px) {
+            .tab-bar { position: static; transform: none; margin: 1rem auto 0; }
             body {
                 overflow-y: auto;
                 justify-content: flex-start;
@@ -449,14 +450,15 @@
             .container {
                 flex-direction: column;
                 padding: 2rem;
+                padding-top: 0.5rem;
                 gap: 0.5rem;
                 min-height: auto;
             }
-            .left-panel { flex: 0 0 auto; width: auto; align-items: center; text-align: center; }
+            .left-panel { flex: 0 0 auto; width: auto; align-items: center; text-align: center; padding-top: 20px; }
             .right-panel { width: 100%; }
             .title-img { max-width: 400px; }
             .subtitle-img { max-width: 340px; margin-top: 0.25rem; }
-            .brand-badge { width: 180px; top: 0.5rem; right: 0.5rem; }
+            .brand-badge { position: fixed; width: 180px; top: auto; bottom: 0.5rem; right: 0.5rem; }
             .reel-item { font-size: 2.6rem; height: 120px; }
             .topic-window { height: 360px; min-width: 0; margin-top: 0; }
             .reel-center-line { height: 120px; }
@@ -470,10 +472,10 @@
         }
 
         @media (max-width: 480px) {
-            .container { padding: 1rem 1rem 2rem; gap: 0.5rem; padding-top: 2.5rem; }
+            .container { padding: 1rem 1rem 2rem; gap: 0.5rem; padding-top: 0.5rem; }
             .title-img { max-width: 280px; }
             .subtitle-img { width: 240px; margin-top: 0.25rem; }
-            .brand-badge { width: 120px; top: 0.5rem; right: 0.5rem; }
+            .brand-badge { width: 120px; bottom: 0.5rem; right: 0.5rem; }
             .reel-assembly { margin-left: -1rem; margin-right: -1rem; }
             .reel-item { font-size: 2rem; height: 100px; padding: 0 0.5rem; }
             .topic-window { height: 300px; margin-top: 0; }
