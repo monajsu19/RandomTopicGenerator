@@ -361,8 +361,9 @@
         })();
 
         // --- State ---
-        var totalSeconds = 60;
-        var remainingSeconds = 60;
+        var urlDuration = parseInt(new URLSearchParams(window.location.search).get('duration'));
+        var totalSeconds = urlDuration > 0 ? urlDuration : 60;
+        var remainingSeconds = totalSeconds;
         var isRunning = false;
         var hasStarted = false;
         var intervalId = null;
@@ -669,8 +670,8 @@
                 clearInterval(intervalId);
                 intervalId = null;
             }
-            totalSeconds = 60;
-            remainingSeconds = 60;
+            totalSeconds = urlDuration > 0 ? urlDuration : 60;
+            remainingSeconds = totalSeconds;
             ringProgress.classList.remove('finished');
             timeDisplay.classList.remove('finished');
             unlockEditing();

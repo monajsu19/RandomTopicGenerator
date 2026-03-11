@@ -1109,10 +1109,125 @@
         .title-img-interview               { display: none; }
         .mode-interview .title-img-topics  { display: none; }
         .mode-interview .title-img-interview { display: block; }
-        .mode-interview .subtitle-img      { display: none; }
+        .mode-interview .subtitle-img-topics    { display: none; }
+        .mode-interview .subtitle-img-vocabulary { display: none; }
         .mode-interview .lang-dropdown     { display: none; }
         .mode-interview .diff-dropdown     { display: none; }
         .mode-interview .framework-buttons { display: flex; }
+
+        /* --- Vocabulary Mode Visibility --- */
+        .title-img-vocabulary              { display: none; }
+        .subtitle-img-vocabulary           { display: none; margin-top: 0.25rem; }
+        .vocab-definition                  { display: none; }
+        .mode-vocabulary .title-img-topics   { display: none; }
+        .mode-vocabulary .title-img-interview { display: none; }
+        .mode-vocabulary .title-img-vocabulary { display: block; }
+        .mode-vocabulary .subtitle-img-topics  { display: none; }
+        .mode-vocabulary .subtitle-img-vocabulary { display: block; }
+        .mode-vocabulary .lang-dropdown      { display: none; }
+        .mode-vocabulary .cat-dropdown       { display: none; }
+        .mode-vocabulary .framework-buttons  { display: none; }
+
+        /* --- Vocabulary Definition Card --- */
+        .vocab-definition {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            border: 1.5px solid rgba(26, 60, 52, 0.18);
+            border-radius: 16px;
+            padding: 1.4rem 1.6rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 16px rgba(26, 60, 52, 0.08);
+        }
+        .vocab-definition.visible {
+            display: block;
+            animation: fwPopIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .vocab-word-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.15rem;
+        }
+        .vocab-word {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: #1A3C34;
+        }
+        .vocab-speak-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1.5px solid rgba(26, 60, 52, 0.25);
+            border-radius: 50%;
+            background: transparent;
+            color: #1A3C34;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+            flex-shrink: 0;
+        }
+        .vocab-speak-btn:hover {
+            background: rgba(26, 60, 52, 0.08);
+            border-color: rgba(26, 60, 52, 0.5);
+        }
+        .vocab-speak-btn:active {
+            transform: scale(0.9);
+        }
+        .vocab-pos {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-style: italic;
+            color: rgba(26, 60, 52, 0.5);
+            margin-bottom: 0.6rem;
+        }
+        .vocab-def {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #1A3C34;
+            margin-bottom: 1rem;
+        }
+        .vocab-example-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #2A5A4E;
+            margin-bottom: 0.3rem;
+        }
+        .vocab-example {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            font-style: italic;
+            line-height: 1.6;
+            color: rgba(26, 60, 52, 0.75);
+            margin-bottom: 1rem;
+        }
+        .vocab-angle-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #e4a959;
+            margin-bottom: 0.3rem;
+        }
+        .vocab-angle {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: rgba(26, 60, 52, 0.8);
+        }
+
+        @media (max-width: 480px) {
+            .vocab-definition { padding: 1rem 1.2rem; }
+            .vocab-word { font-size: 1.4rem; }
+            .vocab-def { font-size: 0.9rem; }
+            .vocab-angle { font-size: 0.82rem; }
+        }
 
         /* --- Tab Bar Responsive --- */
         @media (max-width: 768px) {
@@ -1132,13 +1247,30 @@
     <div class="tab-bar" id="tabBar">
         <button class="tab-btn active" data-tab="topics">Random Topics</button>
         <button class="tab-btn" data-tab="interview">Interview Prep</button>
+        <button class="tab-btn" data-tab="vocabulary">Learn Vocab</button>
     </div>
     <img src="brand-badge.png" alt="Baby Steps to the Mic ©" class="brand-badge">
     <div class="container">
         <div class="left-panel">
             <img src="title.png" alt="Impromptu Speaking" class="title-img title-img-topics">
             <img src="interviewprep.png" alt="Interview Prep" class="title-img title-img-interview">
-            <img src="subtitle.png" alt="1) Pull lever to get topic 2) Set 1 min timer 3) Record & speak" class="subtitle-img">
+            <img src="learnvocab.png" alt="Learn Vocab" class="title-img title-img-vocabulary">
+            <img src="subtitle.png" alt="1) Pull lever to get topic 2) Set 1 min timer 3) Record & speak" class="subtitle-img subtitle-img-topics">
+            <img src="vocab-subtitle.png" alt="1) Get random vocab 2) Set 30 sec timer 3) Use vocab in speech" class="subtitle-img subtitle-img-vocabulary">
+            <div class="vocab-definition" id="vocabDefinition">
+                <div class="vocab-word-row">
+                    <div class="vocab-word" id="vocabWord"></div>
+                    <button class="vocab-speak-btn" id="vocabSpeakBtn" onclick="speakVocabWord()" aria-label="Hear pronunciation">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                    </button>
+                </div>
+                <div class="vocab-pos" id="vocabPos"></div>
+                <div class="vocab-def" id="vocabDef"></div>
+                <div class="vocab-example-label">Example sentence:</div>
+                <div class="vocab-example" id="vocabExample"></div>
+                <div class="vocab-angle-label">Speaking angle:</div>
+                <div class="vocab-angle" id="vocabAngle"></div>
+            </div>
             <div class="framework-buttons" id="frameworkButtons">
                 <div class="fw-heading" id="fwHeading">Frameworks</div>
                 <div class="framework-card" id="fwStar" data-framework="star">
@@ -1364,6 +1496,7 @@
     <script src="topics.js"></script>
     <script src="topics-categories.js"></script>
     <script src="topics-interview.js"></script>
+    <script src="topics-vocabulary.js"></script>
     <script>
         // --- Mode State ---
         var currentMode = localStorage.getItem('impromptu-mode') || 'topics';
@@ -1619,6 +1752,10 @@
                 collapseAllFrameworks();
                 hideRecommendation();
             }
+            if (currentMode === 'vocabulary') {
+                var vocabBox = document.getElementById('vocabDefinition');
+                if (vocabBox) vocabBox.classList.remove('visible');
+            }
 
             const reelStrip = document.getElementById('reelStrip');
             const centerLine = document.getElementById('centerLine');
@@ -1776,6 +1913,9 @@
                     landingItem.classList.add('landed');
                     var topicText = landingItem.innerText.replace(/\n/g, ' ').trim();
                     var timerUrl = 'timer.html?topic=' + encodeURIComponent(topicText);
+                    if (currentMode === 'vocabulary') {
+                        timerUrl += '&duration=30';
+                    }
                     document.querySelectorAll('.timer-btn-desktop, .timer-btn-mobile').forEach(function(link) {
                         link.href = timerUrl;
                     });
@@ -1792,6 +1932,22 @@
                                 var btn = document.getElementById('exampleBtn');
                                 if (btn) btn.classList.add('visible');
                             }
+                        }
+                    }
+
+                    // Show definition card in vocabulary mode
+                    if (currentMode === 'vocabulary') {
+                        var entry = vocabDefinitionMap[topicText];
+                        if (entry) {
+                            document.getElementById('vocabWord').textContent = topicText;
+                            document.getElementById('vocabPos').textContent = entry.pos;
+                            document.getElementById('vocabDef').textContent = entry.def;
+                            document.getElementById('vocabExample').textContent = entry.sentence;
+                            document.getElementById('vocabAngle').textContent = entry.angle;
+                            var vocabBox = document.getElementById('vocabDefinition');
+                            vocabBox.classList.remove('visible');
+                            void vocabBox.offsetWidth; // force reflow for re-animation
+                            vocabBox.classList.add('visible');
                         }
                     }
                 }
@@ -2149,7 +2305,14 @@
                 }
             });
 
-            activeTopics = computeActiveTopics(currentLang, currentDifficulty, currentCategory);
+            if (currentMode === 'vocabulary') {
+                if (diff === 'easy') activeTopics = vocabEasy;
+                else if (diff === 'medium') activeTopics = vocabMedium;
+                else if (diff === 'hard') activeTopics = vocabHard;
+                else activeTopics = vocabAllStrings;
+            } else {
+                activeTopics = computeActiveTopics(currentLang, currentDifficulty, currentCategory);
+            }
             lastTopicIndex = -1;
             reinitReel();
             localStorage.setItem('impromptu-difficulty', diff);
@@ -2350,6 +2513,12 @@
             collapseAllFrameworks();
             hideRecommendation();
 
+            // Hide vocab definition on mode switch
+            var vocabDef = document.getElementById('vocabDefinition');
+            if (vocabDef) vocabDef.classList.remove('visible');
+
+            container.classList.remove('mode-interview', 'mode-vocabulary');
+
             if (mode === 'interview') {
                 container.classList.add('mode-interview');
 
@@ -2368,9 +2537,15 @@
                     catLabel.textContent = 'Top 50 Behavioral';
                 }
                 showInterviewFrameworks(savedInterviewCat);
-            } else {
-                container.classList.remove('mode-interview');
+            } else if (mode === 'vocabulary') {
+                container.classList.add('mode-vocabulary');
 
+                // Set active topics based on current difficulty
+                if (currentDifficulty === 'easy') activeTopics = vocabEasy;
+                else if (currentDifficulty === 'medium') activeTopics = vocabMedium;
+                else if (currentDifficulty === 'hard') activeTopics = vocabHard;
+                else activeTopics = vocabAllStrings;
+            } else {
                 // Restore original category menu
                 catMenu.innerHTML = originalCatMenuHTML;
 
@@ -2443,6 +2618,17 @@
             ppf:  ['past', 'present', 'future'],
             mece: ['buckets', 'analysis', 'recommendation']
         };
+
+        // --- Vocabulary Pronunciation ---
+        function speakVocabWord() {
+            var word = document.getElementById('vocabWord').textContent;
+            if (!word) return;
+            window.speechSynthesis.cancel();
+            var utter = new SpeechSynthesisUtterance(word);
+            utter.lang = 'en-US';
+            utter.rate = 0.9;
+            window.speechSynthesis.speak(utter);
+        }
 
         function showExamplePopup() {
             if (!currentLandedQuestion) return;
